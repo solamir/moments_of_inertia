@@ -68,7 +68,8 @@ Coordinates of the directing vector a_z = {i, j, k} is: 0 -0.85 -0.7
 
 *Note!*
 
-Usually, 3D-visualization programs of molecules store XYZ files with a coordinate grid, in which 1 Å is taken as a unit of length. If this condition is not met, the program will calculate the moments of inertia incorrectly in absolute value, but in the correct ratios.
+* Usually, 3D-visualization programs of molecules store XYZ files with a coordinate grid, in which 1 Å is taken as a unit of length. If this condition is not met, the program will calculate the moments of inertia incorrectly in absolute value, but in the correct ratios.
+* Calculation is available for molecules consisting of the following atoms: H, B, C, N, O, F, Na, Mg, Al, Si, P, S, Cl, Br, I.
 
 ## Contacts
 
