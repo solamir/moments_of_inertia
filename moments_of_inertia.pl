@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # ===============================================================================================
 # This program is designed to calculate the minimum and maximum moments of inertia of a molecule,
@@ -8,8 +8,8 @@
 # ===============================================================================================
 
 use 5.010;
-use warnings;
 use strict;
+#use warnings;
 
 # Atomic mass table of chemical elements in Daltons
 my %atomic_masses = (
@@ -35,7 +35,7 @@ my %atomic_masses = (
 # -a[1-5] - accuracy of the calculation of the moments of inertia (default is -a3)
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
-my $version = "0.1";
+my $version = "0.1_git_1";
 my $accuracy = undef;
 my $significant_figures = undef;
 my $direct_vector_output = undef;
@@ -113,8 +113,8 @@ my $filename = "$ARGV[-1]";
 open(DATA, "$filename") or die "Could not open file '$filename' $!";
 chomp(my @xyz = <DATA>);
 
-# The number N of atoms in a molecule
-my $N = shift @xyz;
+# The number of atoms in a molecule
+my $total_number_of_atoms = shift @xyz;
 
 # Delete comments
 shift @xyz;
@@ -126,58 +126,26 @@ print OUTPUT "Calculation for data from file $ARGV[-1]\n";
 print OUTPUT "The calculation with step of the directing vector is $accuracy\n";
 
 # Delete first and last whitespace
-foreach (@xyz) {
-    s/^\s+|\s+$//g;
-}
+foreach (@xyz) {s/^\s+|\s+$//g}
 
 # Replacing the character of an element in a string with the value of its atomic mass
 foreach (@xyz) {
     my @atom_data = split;
-    if ($atom_data[0] =~ /^H$/) {
-        $atom_data[0] = $atomic_masses{"H"};        
-    }
-    if ($atom_data[0] =~ /^B$/) {
-        $atom_data[0] = $atomic_masses{"B"};      
-    }
-    if ($atom_data[0] =~ /^C$/) {
-        $atom_data[0] = $atomic_masses{"C"};      
-    }
-    if ($atom_data[0] =~ /^N$/) {
-        $atom_data[0] = $atomic_masses{"N"};      
-    }
-    if ($atom_data[0] =~ /^O$/) {
-        $atom_data[0] = $atomic_masses{"O"};      
-    }
-    if ($atom_data[0] =~ /^F$/) {
-        $atom_data[0] = $atomic_masses{"F"};      
-    }
-    if ($atom_data[0] =~ /^Na$/) {
-        $atom_data[0] = $atomic_masses{"Na"};      
-    }
-    if ($atom_data[0] =~ /^Mg$/) {
-        $atom_data[0] = $atomic_masses{"Mg"};      
-    }
-    if ($atom_data[0] =~ /^Al$/) {
-        $atom_data[0] = $atomic_masses{"Al"};      
-    }
-    if ($atom_data[0] =~ /^Si$/) {
-        $atom_data[0] = $atomic_masses{"Si"};      
-    }
-    if ($atom_data[0] =~ /^P$/) {
-        $atom_data[0] = $atomic_masses{"P"};      
-    }
-    if ($atom_data[0] =~ /^S$/) {
-        $atom_data[0] = $atomic_masses{"S"};      
-    }
-    if ($atom_data[0] =~ /^Cl$/) {
-        $atom_data[0] = $atomic_masses{"Cl"};      
-    }
-    if ($atom_data[0] =~ /^Br$/) {
-        $atom_data[0] = $atomic_masses{"Br"};      
-    }
-    if ($atom_data[0] =~ /^I$/) {
-        $atom_data[0] = $atomic_masses{"I"};      
-    }                        
+    if ($atom_data[0] =~ /^H$/) {$atom_data[0] = $atomic_masses{"H"}}
+    if ($atom_data[0] =~ /^B$/) {$atom_data[0] = $atomic_masses{"B"}}
+    if ($atom_data[0] =~ /^C$/) {$atom_data[0] = $atomic_masses{"C"}}
+    if ($atom_data[0] =~ /^N$/) {$atom_data[0] = $atomic_masses{"N"}}
+    if ($atom_data[0] =~ /^O$/) {$atom_data[0] = $atomic_masses{"O"}}
+    if ($atom_data[0] =~ /^F$/) {$atom_data[0] = $atomic_masses{"F"}}
+    if ($atom_data[0] =~ /^Na$/) {$atom_data[0] = $atomic_masses{"Na"}}
+    if ($atom_data[0] =~ /^Mg$/) {$atom_data[0] = $atomic_masses{"Mg"}}
+    if ($atom_data[0] =~ /^Al$/) {$atom_data[0] = $atomic_masses{"Al"}}
+    if ($atom_data[0] =~ /^Si$/) {$atom_data[0] = $atomic_masses{"Si"}}
+    if ($atom_data[0] =~ /^P$/) {$atom_data[0] = $atomic_masses{"P"}}
+    if ($atom_data[0] =~ /^S$/) {$atom_data[0] = $atomic_masses{"S"}}
+    if ($atom_data[0] =~ /^Cl$/) {$atom_data[0] = $atomic_masses{"Cl"}}
+    if ($atom_data[0] =~ /^Br$/) {$atom_data[0] = $atomic_masses{"Br"}}
+    if ($atom_data[0] =~ /^I$/) {$atom_data[0] = $atomic_masses{"I"}}                        
     $_ = "@atom_data";
 }
 
@@ -217,12 +185,12 @@ for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
     for (my $Y_a = -1; $Y_a <= 1; $Y_a = $Y_a + $accuracy) {
         for (my $Z_a = -1; $Z_a <= 1; $Z_a = $Z_a + $accuracy) {
             my $I = 0;
-            for (my $n = 1; $n <= $N; $n++) {
+            for (my $n = 1; $n <= $total_number_of_atoms; $n++) {
                 my $Ii = &mass($n) * (&distance(&coordinates($n, "x"), &coordinates($n, "y"), &coordinates($n, "z"), $X_a, $Y_a, $Z_a)) ** 2;
                 $I += $Ii;
             }
             push @I, $I;
-            push @XaYaZa, ("$X_a" . " " . "$Y_a" . " " . "$Z_a");
+            push @XaYaZa, ($X_a . ' ' . $Y_a . ' ' . $Z_a);
         }
     }
 }
@@ -264,15 +232,9 @@ sub mass {
 # &coordinates(n, ["x", "y", "z"])
 sub coordinates {
     my @atom_data = split /\s+/, $xyz[$_[0] - 1];
-    if ($_[1] =~ /x/) {
-        return $atom_data[1];
-    }
-    if ($_[1] =~ /y/) {
-        return $atom_data[2];
-    }
-    if ($_[1] =~ /z/) {
-        return $atom_data[3];
-    }
+    if ($_[1] =~ /x/) {return $atom_data[1]}
+    if ($_[1] =~ /y/) {return $atom_data[2]}
+    if ($_[1] =~ /z/) {return $atom_data[3]}
 }
 
 # The function returns the distance between the atom and the line defined by the directing vector c = (X_a; Y_a; Z_a):
@@ -286,7 +248,7 @@ sub distance {
     my $j = -1 * ($_[5] * $u_x - $_[3] * $u_z);
     my $k = $_[4] * $u_x - $_[3] * $u_y;
 
-    my $distance = ($i ** 2 + $j ** 2 + $k ** 2) ** 0.5 / ($_[3] ** 2 + $_[4] ** 2 + $_[5] ** 2) ** 0.5;
+    my $distance = sqrt($i ** 2 + $j ** 2 + $k ** 2) / sqrt($_[3] ** 2 + $_[4] ** 2 + $_[5] ** 2);
     return $distance;
 }
 
@@ -294,17 +256,13 @@ sub distance {
 # &min(@array)
 sub min {
     my ($min, @vars) = @_;
-    for (@vars) {
-        $min = $_ if $_ < $min;
-    }
+    for (@vars) {$min = $_ if $_ < $min}
     return $min;
 }
 
 sub max {
     my ($max, @vars) = @_;
-    for (@vars) {
-        $max = $_ if $_ > $max;
-    }
+    for (@vars) {$max = $_ if $_ > $max}
     return $max;
 }
 
@@ -315,9 +273,7 @@ sub max {
 sub return_XaYaZa_MIN {
     my $count = 0;
     foreach (@I) {
-        if ($_ =~ /$I_min/) {
-            return $XaYaZa[$count];
-        }
+        if ($_ =~ /$I_min/) {return $XaYaZa[$count]}
         $count++;
     }
 }
@@ -325,9 +281,7 @@ sub return_XaYaZa_MIN {
 sub return_XaYaZa_MAX {
     my $count = 0;
     foreach (@I) {
-        if ($_ =~ /$I_max/) {
-            return $XaYaZa[$count];
-        }
+        if ($_ =~ /$I_max/) {return $XaYaZa[$count]}
         $count++;
     }
 }
