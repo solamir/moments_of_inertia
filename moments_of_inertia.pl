@@ -36,7 +36,7 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i keys key is checked below
-my $version = "1.1_git_5";
+my $version = "1.1_git_6";
 my ($accuracy, $significant_figures, $direct_vector_output);
 
 foreach (@ARGV) {
@@ -154,7 +154,7 @@ foreach (@xyz) {
     $_ = "@atom_data";
 }
 
-# Сreating mass and coordinate arrays
+# Сreating masses and coordinates arrays
 my (@masses, @X, @Y, @Z);
 foreach (@xyz) {push @masses, (split)[0]}
 foreach (@xyz) {push @X, (split)[1]}
@@ -170,12 +170,6 @@ for (my $n = 0; $n <= $total_number_of_atoms -1; $n++) {
     $sum_Zm += $masses[$n] * $Z[$n];
     $sum_m += $masses[$n];
 }
-#foreach (@xyz) { # Переписать
-#    $sum_Xm += (split)[0] * (split)[1];
-#    $sum_Ym += (split)[0] * (split)[2];
-#    $sum_Zm += (split)[0] * (split)[3];
-#    $sum_m += (split)[0];
-#}
 
 my $X_c = $sum_Xm / $sum_m;
 my $Y_c = $sum_Ym / $sum_m;
