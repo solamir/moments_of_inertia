@@ -9,7 +9,7 @@
 
 use 5.010;
 use strict;
-use warnings;
+#use warnings;
 
 # Atomic mass table of chemical elements in Daltons
 my %atomic_masses = (
@@ -35,7 +35,8 @@ my %atomic_masses = (
 # -a[1-5] - accuracy of the calculation of the moments of inertia (default is -a3)
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
-my $version = "1.1";
+# -i keys key is checked below
+my $version = "1.1_git_4";
 my ($accuracy, $significant_figures, $direct_vector_output);
 
 foreach (@ARGV) {
@@ -110,6 +111,7 @@ foreach (@ARGV) {
 my $filename = $ARGV[-1];
 open(DATA, $filename) or die "Could not open file $filename $!";
 chomp(my @xyz = <DATA>);
+close DATA;
 
 # The number of atoms in a molecule
 my $total_number_of_atoms = shift @xyz;
