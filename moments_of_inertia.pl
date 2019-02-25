@@ -36,7 +36,7 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i keys key is checked below
-my $version = "1.1_git_4";
+my $version = "1.1_git_5";
 my ($accuracy, $significant_figures, $direct_vector_output);
 
 foreach (@ARGV) {
@@ -154,15 +154,28 @@ foreach (@xyz) {
     $_ = "@atom_data";
 }
 
+# Сreating mass and coordinate arrays
+my (@masses, @X, @Y, @Z);
+foreach (@xyz) {push @masses, (split)[0]}
+foreach (@xyz) {push @X, (split)[1]}
+foreach (@xyz) {push @Y, (split)[2]}
+foreach (@xyz) {push @Z, (split)[3]}
+
 # Finding the coordinates of the center of mass
 my ($sum_Xm, $sum_Ym, $sum_Zm, $sum_m);
 
-foreach (@xyz) {
-    $sum_Xm += (split)[0] * (split)[1];
-    $sum_Ym += (split)[0] * (split)[2];
-    $sum_Zm += (split)[0] * (split)[3];
-    $sum_m += (split)[0];
+for (my $n = 0; $n <= $total_number_of_atoms -1; $n++) {
+    $sum_Xm += $masses[$n] * $X[$n];
+    $sum_Ym += $masses[$n] * $Y[$n];
+    $sum_Zm += $masses[$n] * $Z[$n];
+    $sum_m += $masses[$n];
 }
+#foreach (@xyz) { # Переписать
+#    $sum_Xm += (split)[0] * (split)[1];
+#    $sum_Ym += (split)[0] * (split)[2];
+#    $sum_Zm += (split)[0] * (split)[3];
+#    $sum_m += (split)[0];
+#}
 
 my $X_c = $sum_Xm / $sum_m;
 my $Y_c = $sum_Ym / $sum_m;
@@ -188,8 +201,8 @@ for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
     for (my $Y_a = -1; $Y_a <= 1; $Y_a = $Y_a + $accuracy) {
         for (my $Z_a = -1; $Z_a <= 1; $Z_a = $Z_a + $accuracy) {
             my $I = 0;
-            for (my $n = 1; $n <= $total_number_of_atoms; $n++) {
-                my $Ii = &mass($n) * (&distance(&coordinates($n, "x"), &coordinates($n, "y"), &coordinates($n, "z"), $X_a, $Y_a, $Z_a)) ** 2;
+            for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
+                my $Ii = $masses[$n] * (&distance($X[$n], $Y[$n], $Z[$n], $X_a, $Y_a, $Z_a)) ** 2;
                 $I += $Ii;
             }
             push @I, $I;
@@ -198,9 +211,7 @@ for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
     }
 }
 
-# Remove the first undef value from the arrays @I and @XaYaZa and find Ix, Iz and its directing vector сoordinates 
-shift @I;
-shift @XaYaZa;
+# Find Ix, Iz and its directing vector сoordinates
 
 my $I_min = &min(@I);
 my $I_max = &max(@I);
@@ -255,15 +266,6 @@ close OUTPUT;
 sub mass {
     my @atom_data = split /\s+/, $xyz[$_[0] - 1];
     return $atom_data[0];
-}
-
-# The function returns the coordinates of the atom with the number n:
-# &coordinates(n, ["x", "y", "z"])
-sub coordinates {
-    my @atom_data = split /\s+/, $xyz[$_[0] - 1];
-    if ($_[1] =~ /x/) {return $atom_data[1]}
-    if ($_[1] =~ /y/) {return $atom_data[2]}
-    if ($_[1] =~ /z/) {return $atom_data[3]}
 }
 
 # The function returns the distance between the atom and the line defined by the directing vector c = (X_a; Y_a; Z_a):
