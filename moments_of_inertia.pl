@@ -9,7 +9,7 @@
 
 use 5.010;
 use strict;
-#use warnings;
+use warnings;
 
 # Atomic mass table of chemical elements in Daltons
 my %atomic_masses = (
@@ -35,10 +35,8 @@ my %atomic_masses = (
 # -a[1-5] - accuracy of the calculation of the moments of inertia (default is -a3)
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
-my $version = "0.1_git_1";
-my $accuracy = undef;
-my $significant_figures = undef;
-my $direct_vector_output = undef;
+my $version = "0.1_git_2";
+my ($accuracy, $significant_figures, $direct_vector_output);
 
 foreach (@ARGV) {
    if ($_ eq "-v") {
@@ -150,17 +148,13 @@ foreach (@xyz) {
 }
 
 # Finding the coordinates of the center of mass
-my $sum_Xm = undef;
-my $sum_Ym = undef;
-my $sum_Zm = undef;
-my $sum_m = undef;
+my ($sum_Xm, $sum_Ym, $sum_Zm, $sum_m);
 
 foreach (@xyz) {
-    my @atom_data = split;
-    $sum_Xm += $atom_data[0] * $atom_data[1];
-    $sum_Ym += $atom_data[0] * $atom_data[2];
-    $sum_Zm += $atom_data[0] * $atom_data[3];
-    $sum_m += $atom_data[0];
+    $sum_Xm += (split)[0] * (split)[1];
+    $sum_Ym += (split)[0] * (split)[2];
+    $sum_Zm += (split)[0] * (split)[3];
+    $sum_m += (split)[0];
 }
 
 my $X_c = $sum_Xm / $sum_m;
@@ -178,8 +172,7 @@ print OUTPUT "Coordinates of the center of gravity: ($X_c_rounded; $Y_c_rounded;
 # @I is array of inertia moments, and @XaYaZa is array of coordinates of the directing vectors of the lines
 # corresponding to this moment of inertia. The lines take all the spatial directions and for each straight line
 # the moment of inertia of the molecule is calculated relative to this line.
-my @I = undef;
-my @XaYaZa = undef;
+my (@I, @XaYaZa);
 
 for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
     for (my $Y_a = -1; $Y_a <= 1; $Y_a = $Y_a + $accuracy) {
@@ -223,8 +216,7 @@ close OUTPUT;
 # The function returns the atomic mass of the element with the number n:
 # &mass(n)
 sub mass {
-    my $atom_data = $xyz[$_[0] - 1];
-    my @atom_data = split /\s+/, $atom_data;
+    my @atom_data = split /\s+/, $xyz[$_[0] - 1];
     return $atom_data[0];
 }
 
