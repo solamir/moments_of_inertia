@@ -35,7 +35,7 @@ my %atomic_masses = (
 # -a[1-5] - accuracy of the calculation of the moments of inertia (default is -a3)
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
-# -i keys key is checked below
+# -i key is checked below
 my $version = "1.1_git_6";
 my ($accuracy, $significant_figures, $direct_vector_output);
 
