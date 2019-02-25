@@ -35,7 +35,7 @@ my %atomic_masses = (
 # -a[1-5] - accuracy of the calculation of the moments of inertia (default is -a3)
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
-my $version = "0.1_git_2";
+my $version = "1.1";
 my ($accuracy, $significant_figures, $direct_vector_output);
 
 foreach (@ARGV) {
@@ -107,8 +107,8 @@ foreach (@ARGV) {
 }
 
 # Opening a file and reading information
-my $filename = "$ARGV[-1]";
-open(DATA, "$filename") or die "Could not open file '$filename' $!";
+my $filename = $ARGV[-1];
+open(DATA, $filename) or die "Could not open file $filename $!";
 chomp(my @xyz = <DATA>);
 
 # The number of atoms in a molecule
@@ -118,9 +118,14 @@ my $total_number_of_atoms = shift @xyz;
 shift @xyz;
 
 # Displays preliminary information about the calculation
-open OUTPUT, ">>", "${filename}.txt";
-print OUTPUT "\n";
+$filename =~ s/...$/txt/; # Replacing file name extension with .txt
+open OUTPUT, ">>", ${filename};
+print OUTPUT "This is Moment of inertia version $version\n";
+
+my $time = localtime;
+print OUTPUT "System date is $time\n";
 print OUTPUT "Calculation for data from file $ARGV[-1]\n";
+print OUTPUT "\n";
 print OUTPUT "The calculation with step of the directing vector is $accuracy\n";
 
 # Delete first and last whitespace
@@ -161,12 +166,15 @@ my $X_c = $sum_Xm / $sum_m;
 my $Y_c = $sum_Ym / $sum_m;
 my $Z_c = $sum_Zm / $sum_m;
 
-# Rounding the coordinates of the center of masses and their output
-my $X_c_rounded = sprintf("%.5f", $X_c);
-my $Y_c_rounded = sprintf("%.5f", $Y_c);
-my $Z_c_rounded = sprintf("%.5f", $Z_c);
-
-print OUTPUT "Coordinates of the center of gravity: ($X_c_rounded; $Y_c_rounded; $Z_c_rounded)\n";
+my $small_space = "-" x 49;
+print OUTPUT "\n";
+print OUTPUT "$small_space\n";
+printf OUTPUT "|%-47s|\n", "Coordinates of the center of gravity";
+print OUTPUT "$small_space\n";
+printf OUTPUT "|%-15s|%-15s|%-15s|\n", "x", "y", "z";
+print OUTPUT "$small_space\n";
+printf OUTPUT "|%-15.5f|%-15.5f|%-15.5f|\n", $X_c, $Y_c, $Z_c;
+print OUTPUT "$small_space\n";
 
 # The search of the moments of inertia with relative to the various lines passing through the center of masses
 # @I is array of inertia moments, and @XaYaZa is array of coordinates of the directing vectors of the lines
@@ -194,18 +202,45 @@ shift @XaYaZa;
 
 my $I_min = &min(@I);
 my $I_max = &max(@I);
-my $I_min_rounded = sprintf("%.${significant_figures}f", $I_min);
-my $I_max_rounded = sprintf("%.${significant_figures}f", $I_max);
 
-print OUTPUT "Moment of inertia Ix is: $I_min_rounded Da*(Å^2)\n";
-print OUTPUT "Moment of inertia Iz is: $I_max_rounded Da*(Å^2)\n";
+print OUTPUT "\n";
+print OUTPUT "$small_space\n";
+printf OUTPUT "|%-47s|\n", "Moments of inertia, Da*A^2";
+print OUTPUT "$small_space\n";
+printf OUTPUT "|%-23s|%-23s|\n", "Ix", "Iz";
+print OUTPUT "$small_space\n";
+printf OUTPUT "|%-23.${significant_figures}f|%-23.${significant_figures}f|\n", $I_min, $I_max;
+print OUTPUT "$small_space\n";
 
 if ($direct_vector_output) {
-    my $XaYaZa_MIN = &return_XaYaZa_MIN($I_min);
-    my $XaYaZa_MAX = &return_XaYaZa_MAX($I_max);
-    print OUTPUT "Coordinates of the directing vector a_x = {i, j, k} is: $XaYaZa_MIN\n";
-    print OUTPUT "Coordinates of the directing vector a_z = {i, j, k} is: $XaYaZa_MAX\n";
+    my @XaYaZa_MIN = &return_XaYaZa_MIN($I_min);
+    my @XaYaZa_MAX = &return_XaYaZa_MAX($I_max);
+    print OUTPUT "\n";
+    print OUTPUT "$small_space\n";
+    printf OUTPUT "|%-47s|\n", "Coordinates of the directing vectors";
+    print OUTPUT "$small_space\n";
+    printf OUTPUT "|%11s|%-11s|%-11s|%-11s|\n", "", "i", "j", "k";
+    print OUTPUT "$small_space\n";
+    printf OUTPUT "|%-11s|%-11s|%-11s|%-11s|\n", "a_x", $XaYaZa_MIN[0], $XaYaZa_MIN[1], $XaYaZa_MIN[2];
+    print OUTPUT "$small_space\n";
+    printf OUTPUT "|%-11s|%-11s|%-11s|%-11s|\n", "a_z", $XaYaZa_MAX[0], $XaYaZa_MAX[1], $XaYaZa_MAX[2];
+    print OUTPUT "$small_space\n";
 }
+
+# Displaying initial data
+foreach (@ARGV) {
+    if ($_ eq "-i") {
+        my @initial_data = map $_ . "\n", @xyz;
+        print OUTPUT "\n";
+        print OUTPUT "Initial data:\n";
+        foreach (@initial_data) {printf OUTPUT "%-6s %8s %8s %8s\n", (split)[0], (split)[1], (split)[2], (split)[3]}
+        print OUTPUT "\n";
+        last;
+    }
+}
+
+my $space = "-" x 55;
+print OUTPUT "$space\n";
 
 close OUTPUT;
 
@@ -265,7 +300,10 @@ sub max {
 sub return_XaYaZa_MIN {
     my $count = 0;
     foreach (@I) {
-        if ($_ =~ /$I_min/) {return $XaYaZa[$count]}
+        if ($_ =~ /$I_min/) {
+            my @coord_MIN = split /\s+/, $XaYaZa[$count];
+            return @coord_MIN;
+        }
         $count++;
     }
 }
@@ -273,7 +311,10 @@ sub return_XaYaZa_MIN {
 sub return_XaYaZa_MAX {
     my $count = 0;
     foreach (@I) {
-        if ($_ =~ /$I_max/) {return $XaYaZa[$count]}
+        if ($_ =~ /$I_max/) {
+            my @coord_MAX = split /\s+/, $XaYaZa[$count];
+            return @coord_MAX;
+        }
         $count++;
     }
 }

@@ -4,7 +4,7 @@ The program calculates the minimum (*Ix*) and maximum (*Iz*) moments of inertia 
 
 ## System requirements
 
-For normal operation of the program, at least 2Gb of RAM is required. However, when calculating large molecules (more than 30 atoms), the recommended amount of RAM is 8 Gb.
+For normal operation of the program, at least 2 Gb of RAM is required. However, when calculating large molecules (more than 30 atoms), the recommended amount of RAM is 4 Gb.
 
 ## Software requirements
 
@@ -18,14 +18,31 @@ To use the program, run it in the shell with the location of the XYZ file, for e
 $ ./moments_of_inertia.pl filename.xyz
 ```
 
-The program will create a text file *filename.xyz.txt* with the results of the calculation in the directory where the file *filename.xyz* is located. Examples of source XYZ files can be found in the *Examples* folder. For example, launching the program with the file *Pyridine.xyz* will create the file *Pyridine.xyz.txt* with the results of the calculation:
+The program will create a text file *filename.txt* with the results of the calculation in the directory where the file *filename.xyz* is located. Examples of source XYZ files can be found in the *Examples* folder. For example, launching the program with the file *Pentane.xyz* will create the file *Pentane.txt* with the results of the calculation:
 
 ```
-Calculation for data from file ./Pyridine.xyz
-The calculation with step of the directing vector is 0.01
-Coordinates of the center of gravity: (-0.18023; 0.36095; 0.29286)
-Moment of inertia Ix is: 83.776 Da*(Å^2)
-Moment of inertia Iz is: 170.861 Da*(Å^2)
+This is Moment of inertia version 1.1
+System date is Mon Feb 25 20:18:04 2019
+Calculation for data from file /mnt/e/Pentane.xyz
+
+The calculation with step of the directing vector is 0.05
+
+-------------------------------------------------
+|Coordinates of the center of gravity           |
+-------------------------------------------------
+|x              |y              |z              |
+-------------------------------------------------
+|3.13712        |0.78884        |-0.90687       |
+-------------------------------------------------
+
+-------------------------------------------------
+|Moments of inertia, Da*A^2                     |
+-------------------------------------------------
+|Ix                     |Iz                     |
+-------------------------------------------------
+|29.989                 |269.277                |
+-------------------------------------------------
+-------------------------------------------------------
 ```
 
 You can set the parameters of the program using the following startup keys:
@@ -38,32 +55,45 @@ You can set the parameters of the program using the following startup keys:
 
 **-d** - Display coordinates of axis directing vectors with minimum and maximum inertia moments.
 
-For example, the result of the calculation for the pentane molecule using the XYZ file from the *Examples* folder with the keys will look like this:
+**-i** - Display the initial information for the calculation.
 
-```
-Calculation for data from file ./Pentane.xyz
-The calculation with step of the directing vector is 0.01
-Coordinates of the center of gravity: (3.13712; 0.78884; -0.90687)
-Moment of inertia Ix is: 29.987 Da*(Å^2)
-Moment of inertia Iz is: 269.277 Da*(Å^2)
-```
-
-And when you run a program with keys
+For example, the result of the calculation for the pentane molecule using the XYZ file from the *Examples* folder with the keys **-a2** **-o4** **-d** will look like this:
 
 ```
 $ ./moments_of_inertia.pl -a2 -o4 -d ./Pentane.xyz
-```
+$ cat ./Pentane.txt
+This is Moment of inertia version 1.1
+System date is Mon Feb 25 20:24:44 2019
+Calculation for data from file /mnt/e/Pentane.xyz
 
-The result will look like this:
-
-```
-Calculation for data from file ../Pentane.xyz
 The calculation with step of the directing vector is 0.05
-Coordinates of the center of gravity: (3.13712; 0.78884; -0.90687)
-Moment of inertia Ix is: 29.9888 Da*(Å^2)
-Moment of inertia Iz is: 269.2769 Da*(Å^2)
-Coordinates of the directing vector a_x = {i, j, k} is: 0.55 0.25 -0.3
-Coordinates of the directing vector a_z = {i, j, k} is: 0 -0.85 -0.7
+
+-------------------------------------------------
+|Coordinates of the center of gravity           |
+-------------------------------------------------
+|x              |y              |z              |
+-------------------------------------------------
+|3.13712        |0.78884        |-0.90687       |
+-------------------------------------------------
+
+-------------------------------------------------
+|Moments of inertia, Da*A^2                     |
+-------------------------------------------------
+|Ix                     |Iz                     |
+-------------------------------------------------
+|29.9888                |269.2769               |
+-------------------------------------------------
+
+-------------------------------------------------
+|Coordinates of the directing vectors           |
+-------------------------------------------------
+|           |i          |j          |k          |
+-------------------------------------------------
+|a_x        |0.55       |0.25       |-0.3       |
+-------------------------------------------------
+|a_z        |0          |-0.85      |-0.7       |
+-------------------------------------------------
+-------------------------------------------------------
 ```
 
 *Note!*
