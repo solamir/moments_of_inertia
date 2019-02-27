@@ -36,75 +36,35 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i key is checked below
-my $version = "1.1_git_6";
+my $version = "1.1_git_7";
 my ($accuracy, $significant_figures, $direct_vector_output);
 
 foreach (@ARGV) {
-   if ($_ eq "-v") {
-        print "This is program version $version\n";
-        exit;
-    } 
+   if ($_ eq "-v") {print "This is program version $version\n"; exit} 
 }
 
 foreach (@ARGV) {
     # Accuracy of the calculation
-    if ($_ eq "-a1") {
-        $accuracy = 0.1;
-        last;
-    }
-    elsif ($_ eq "-a2") {
-        $accuracy = 0.05;
-        last;
-    }
-    elsif ($_ eq "-a3") {
-        $accuracy = 0.01;
-        last;
-    }
-    elsif ($_ eq "-a4") {
-        $accuracy = 0.005;
-        last;
-    }
-    elsif ($_ eq "-a5") {
-        $accuracy = 0.001;
-        last;
-    }
-    else {
-        $accuracy = 0.01;
-    }
+    if ($_ eq "-a1") {$accuracy = 0.1; last}
+    elsif ($_ eq "-a2") {$accuracy = 0.05; last}
+    elsif ($_ eq "-a3") {$accuracy = 0.01; last}
+    elsif ($_ eq "-a4") {$accuracy = 0.005; last}
+    elsif ($_ eq "-a5") {$accuracy = 0.001; last}
+    else {$accuracy = 0.01}
 }
 
 foreach (@ARGV) {
     # Number of significant figures in the output result
-    if ($_ eq "-o1") {
-        $significant_figures = 1;
-        last;
-    }
-    elsif ($_ eq "-o2") {
-        $significant_figures = 2;
-        last;
-    }
-    elsif ($_ eq "-o3") {
-        $significant_figures = 3;
-        last;
-    }
-    elsif ($_ eq "-o4") {
-        $significant_figures = 4;
-        last;
-    }
-    elsif ($_ eq "-o5") {
-        $significant_figures = 5;
-        last;
-    }
-    else {
-        $significant_figures = 3;
-    }
+    if ($_ eq "-o1") {$significant_figures = 1; last}
+    elsif ($_ eq "-o2") {$significant_figures = 2; last}
+    elsif ($_ eq "-o3") {$significant_figures = 3; last}
+    elsif ($_ eq "-o4") {$significant_figures = 4; last}
+    elsif ($_ eq "-o5") {$significant_figures = 5; last}
+    else {$significant_figures = 3}
 }
 
 foreach (@ARGV) {
-    if ($_ eq "-d") {
-        $direct_vector_output = "true";
-        last;
-    }
+    if ($_ eq "-d") {$direct_vector_output = "true"; last}
 }
 
 # Opening a file and reading information
