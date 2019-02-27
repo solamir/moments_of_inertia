@@ -36,7 +36,7 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i key is checked below
-my $version = "1.1_git_7";
+my $version = "1.1_git_8";
 my ($accuracy, $significant_figures, $direct_vector_output);
 
 foreach (@ARGV) {
@@ -214,13 +214,6 @@ close OUTPUT;
 # ======================================================================
 # =========================== Functions ================================
 # ======================================================================
-
-# The function returns the atomic mass of the element with the number n:
-# &mass(n)
-sub mass {
-    my @atom_data = split /\s+/, $xyz[$_[0] - 1];
-    return $atom_data[0];
-}
 
 # The function returns the distance between the atom and the line defined by the directing vector c = (X_a; Y_a; Z_a):
 # &distance(x, y, z, X_a, Y_a, Z_a)
