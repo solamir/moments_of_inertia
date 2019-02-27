@@ -47,15 +47,15 @@ The calculation with step of the directing vector is 0.05
 
 You can set the parameters of the program using the following startup keys:
 
-**-v** - Show program version and exit.
+```-v``` - Show program version and exit.
 
-**-a[1-5]** - Accuracy counting. Sets the interval of movement of the directing vector of the axis of rotation in space. The smaller the interval, the more accurate and longer the calculation takes place (see the principle of operation): **-a1** – 0.1; **-a2** – 0.05; **-a3** – 0.01; **-a4** – 0.005;**-a5** – 0.001. The default key is **-a3**.
+```-a[1-5]``` - Accuracy counting. Sets the interval of movement of the directing vector of the axis of rotation in space. The smaller the interval, the more accurate and longer the calculation takes place (see the principle of operation): **-a1** – 0.1; **-a2** – 0.05; **-a3** – 0.01; **-a4** – 0.005;**-a5** – 0.001. The default key is **-a3**.
 
-**-o[1-5]** - The number of significant figures to which the value of the moments of inertia will be rounded (in units of Da * Å2). The default key is **-o3**.
+```-o[1-5]``` - The number of significant figures to which the value of the moments of inertia will be rounded (in units of Da * Å2). The default key is **-o3**.
 
-**-d** - Display coordinates of axis directing vectors with minimum and maximum inertia moments.
+```-d``` - Display coordinates of axis directing vectors with minimum and maximum inertia moments.
 
-**-i** - Display the initial information for the calculation.
+```-i``` - Display the initial information for the calculation.
 
 For example, the result of the calculation for the pentane molecule using the XYZ file from the *Examples* folder with the keys **-a2** **-o4** **-d** will look like this:
 
