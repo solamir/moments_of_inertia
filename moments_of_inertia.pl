@@ -36,35 +36,76 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i key is checked below
-my $version = "1.1_git_11";
+my $version = "1.1_git_12";
 my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output);
 
 foreach (@ARGV) {
-   if ($_ eq "-v") {print "This is program version $version\n"; exit} 
+   if ($_ eq "-v") {
+       print "This is program version $version\n";
+       exit;
+       } 
 }
 
 foreach (@ARGV) {
     # Accuracy of the calculation
-    if ($_ eq "-a1") {$accuracy = 0.1; $s_f_vector = 1; last}
-    elsif ($_ eq "-a2") {$accuracy = 0.05; $s_f_vector = 2; last}
-    elsif ($_ eq "-a3") {$accuracy = 0.01; $s_f_vector = 2; last}
-    elsif ($_ eq "-a4") {$accuracy = 0.005; $s_f_vector = 3; last}
-    elsif ($_ eq "-a5") {$accuracy = 0.001; $s_f_vector = 3; last}
+    if ($_ eq "-a1") {
+        $accuracy = 0.1;
+        $s_f_vector = 1;
+        last;
+    }
+    elsif ($_ eq "-a2") {
+        $accuracy = 0.05;
+        $s_f_vector = 2;
+        last;
+    }
+    elsif ($_ eq "-a3") {
+        $accuracy = 0.01;
+        $s_f_vector = 2;
+        last;
+    }
+    elsif ($_ eq "-a4") {
+        $accuracy = 0.005;
+        $s_f_vector = 3;
+        last;
+    }
+    elsif ($_ eq "-a5") {
+        $accuracy = 0.001;
+        $s_f_vector = 3;
+        last;
+    }
     else {$accuracy = 0.01}
 }
 
 foreach (@ARGV) {
     # Number of significant figures in the output result
-    if ($_ eq "-o1") {$s_f_moment = 1; last}
-    elsif ($_ eq "-o2") {$s_f_moment = 2; last}
-    elsif ($_ eq "-o3") {$s_f_moment = 3; last}
-    elsif ($_ eq "-o4") {$s_f_moment = 4; last}
-    elsif ($_ eq "-o5") {$s_f_moment = 5; last}
+    if ($_ eq "-o1") {
+        $s_f_moment = 1;
+        last;
+    }
+    elsif ($_ eq "-o2") {
+        $s_f_moment = 2;
+        last;
+    }
+    elsif ($_ eq "-o3") {
+        $s_f_moment = 3;
+        last;
+    }
+    elsif ($_ eq "-o4") {
+        $s_f_moment = 4;
+        last;
+    }
+    elsif ($_ eq "-o5") {
+        $s_f_moment = 5;
+        last;
+    }
     else {$s_f_moment = 3}
 }
 
 foreach (@ARGV) {
-    if ($_ eq "-d") {$direct_vector_output = "true"; last}
+    if ($_ eq "-d") {
+        $direct_vector_output = "true";
+        last;
+    }
 }
 
 # Opening a file and reading information
