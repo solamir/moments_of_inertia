@@ -9,25 +9,25 @@
 
 use 5.010;
 use strict;
-#use warnings;
+use warnings;
 
 # Atomic mass table of chemical elements in Daltons
 my %atomic_masses = (
-    "H" => 1.008,
-    "B" => 10.810,
-    "C" => 12.011,
-    "N" => 14.007,
-    "O" => 15.999,
-    "F" => 18.998,
-    "Na" => 22.990,
-    "Mg" => 24.305,
-    "Al" => 26.982,
-    "Si" => 28.085,
-    "P" => 30.974,
-    "S" => 32.060,
-    "Cl" => 35.450,
-    "Br" => 79.904,
-    "I" => 126.900,
+    H => 1.008,
+    B => 10.810,
+    C => 12.011,
+    N => 14.007,
+    O => 15.999,
+    F => 18.998,
+    Na => 22.990,
+    Mg => 24.305,
+    Al => 26.982,
+    Si => 28.085,
+    P => 30.974,
+    S => 32.060,
+    Cl => 35.450,
+    Br => 79.904,
+    I => 126.900,
 );
 
 # Checking keys and setting appropriate values:
@@ -36,7 +36,7 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i key is checked below
-my $version = "1.1_git_8";
+my $version = "1.1_git_9";
 my ($accuracy, $significant_figures, $direct_vector_output);
 
 foreach (@ARGV) {
@@ -96,21 +96,21 @@ foreach (@xyz) {s/^\s+|\s+$//g}
 # Replacing the character of an element in a string with the value of its atomic mass
 foreach (@xyz) {
     my @atom_data = split;
-    if ($atom_data[0] =~ /^H$/) {$atom_data[0] = $atomic_masses{"H"}}
-    if ($atom_data[0] =~ /^B$/) {$atom_data[0] = $atomic_masses{"B"}}
-    if ($atom_data[0] =~ /^C$/) {$atom_data[0] = $atomic_masses{"C"}}
-    if ($atom_data[0] =~ /^N$/) {$atom_data[0] = $atomic_masses{"N"}}
-    if ($atom_data[0] =~ /^O$/) {$atom_data[0] = $atomic_masses{"O"}}
-    if ($atom_data[0] =~ /^F$/) {$atom_data[0] = $atomic_masses{"F"}}
-    if ($atom_data[0] =~ /^Na$/) {$atom_data[0] = $atomic_masses{"Na"}}
-    if ($atom_data[0] =~ /^Mg$/) {$atom_data[0] = $atomic_masses{"Mg"}}
-    if ($atom_data[0] =~ /^Al$/) {$atom_data[0] = $atomic_masses{"Al"}}
-    if ($atom_data[0] =~ /^Si$/) {$atom_data[0] = $atomic_masses{"Si"}}
-    if ($atom_data[0] =~ /^P$/) {$atom_data[0] = $atomic_masses{"P"}}
-    if ($atom_data[0] =~ /^S$/) {$atom_data[0] = $atomic_masses{"S"}}
-    if ($atom_data[0] =~ /^Cl$/) {$atom_data[0] = $atomic_masses{"Cl"}}
-    if ($atom_data[0] =~ /^Br$/) {$atom_data[0] = $atomic_masses{"Br"}}
-    if ($atom_data[0] =~ /^I$/) {$atom_data[0] = $atomic_masses{"I"}}                        
+    if ($atom_data[0] =~ /H$/) {$atom_data[0] = $atomic_masses{"H"}}
+    if ($atom_data[0] =~ /B$/) {$atom_data[0] = $atomic_masses{"B"}}
+    if ($atom_data[0] =~ /C$/) {$atom_data[0] = $atomic_masses{"C"}}
+    if ($atom_data[0] =~ /N$/) {$atom_data[0] = $atomic_masses{"N"}}
+    if ($atom_data[0] =~ /O$/) {$atom_data[0] = $atomic_masses{"O"}}
+    if ($atom_data[0] =~ /F$/) {$atom_data[0] = $atomic_masses{"F"}}
+    if ($atom_data[0] =~ /Na$/) {$atom_data[0] = $atomic_masses{"Na"}}
+    if ($atom_data[0] =~ /Mg$/) {$atom_data[0] = $atomic_masses{"Mg"}}
+    if ($atom_data[0] =~ /Al$/) {$atom_data[0] = $atomic_masses{"Al"}}
+    if ($atom_data[0] =~ /Si$/) {$atom_data[0] = $atomic_masses{"Si"}}
+    if ($atom_data[0] =~ /P$/) {$atom_data[0] = $atomic_masses{"P"}}
+    if ($atom_data[0] =~ /S$/) {$atom_data[0] = $atomic_masses{"S"}}
+    if ($atom_data[0] =~ /Cl$/) {$atom_data[0] = $atomic_masses{"Cl"}}
+    if ($atom_data[0] =~ /Br$/) {$atom_data[0] = $atomic_masses{"Br"}}
+    if ($atom_data[0] =~ /I$/) {$atom_data[0] = $atomic_masses{"I"}}                        
     $_ = "@atom_data";
 }
 
@@ -124,7 +124,7 @@ foreach (@xyz) {push @Z, (split)[3]}
 # Finding the coordinates of the center of mass
 my ($sum_Xm, $sum_Ym, $sum_Zm, $sum_m);
 
-for (my $n = 0; $n <= $total_number_of_atoms -1; $n++) {
+for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
     $sum_Xm += $masses[$n] * $X[$n];
     $sum_Ym += $masses[$n] * $Y[$n];
     $sum_Zm += $masses[$n] * $Z[$n];
@@ -167,8 +167,9 @@ for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
 
 # Find Ix, Iz and its directing vector сoordinates
 
-my $I_min = &min(@I);
-my $I_max = &max(@I);
+my @I_sort = sort { $a <=> $b } @I;
+my $I_min = $I_sort[0];
+my $I_max = $I_sort[-1];
 
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
@@ -179,9 +180,10 @@ print OUTPUT "$small_space\n";
 printf OUTPUT "|%-23.${significant_figures}f|%-23.${significant_figures}f|\n", $I_min, $I_max;
 print OUTPUT "$small_space\n";
 
+my @XaYaZa_MIN = &return_XaYaZa_MIN($I_min);
+my @XaYaZa_MAX = &return_XaYaZa_MAX($I_max);
+
 if ($direct_vector_output) {
-    my @XaYaZa_MIN = &return_XaYaZa_MIN($I_min);
-    my @XaYaZa_MAX = &return_XaYaZa_MAX($I_max);
     print OUTPUT "\n";
     print OUTPUT "$small_space\n";
     printf OUTPUT "|%-47s|\n", "Coordinates of the directing vectors";
@@ -228,20 +230,6 @@ sub distance {
 
     my $distance = sqrt($i ** 2 + $j ** 2 + $k ** 2) / sqrt($_[3] ** 2 + $_[4] ** 2 + $_[5] ** 2);
     return $distance;
-}
-
-# Functions to find the minimum or maximum value:
-# &min(@array)
-sub min {
-    my ($min, @vars) = @_;
-    for (@vars) {$min = $_ if $_ < $min}
-    return $min;
-}
-
-sub max {
-    my ($max, @vars) = @_;
-    for (@vars) {$max = $_ if $_ > $max}
-    return $max;
 }
 
 # The functions returns the value of the coordinates of the directing vector according to
