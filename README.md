@@ -2,10 +2,6 @@
 
 The program calculates the minimum (*Ix*) and maximum (*Iz*) moments of inertia of the molecule using atomic coordinates from the [XYZ file](https://en.wikipedia.org/wiki/XYZ_file_format).
 
-## System requirements
-
-For normal operation of the program, at least 2 Gb of RAM is required. However, when calculating large molecules (more than 30 atoms), the recommended amount of RAM is 4 Gb.
-
 ## Software requirements
 
 To run the program, you need a Perl interpreter of version not lower than 5.10 and a shell to start the program. The program can run as a Unix command shell on the Linux operating system, in which the Perl interpreter is usually present with the system, and on the Microsoft Windows operating system using the Windows Power Shell and the installed Perl interpreter, for example, [Strawberry Perl](http://strawberryperl.com/).
