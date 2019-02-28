@@ -36,8 +36,8 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i key is checked below
-my $version = "1.1_git_10";
-my ($accuracy, $significant_figures, $direct_vector_output);
+my $version = "1.1_git_11";
+my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output);
 
 foreach (@ARGV) {
    if ($_ eq "-v") {print "This is program version $version\n"; exit} 
@@ -45,22 +45,22 @@ foreach (@ARGV) {
 
 foreach (@ARGV) {
     # Accuracy of the calculation
-    if ($_ eq "-a1") {$accuracy = 0.1; last}
-    elsif ($_ eq "-a2") {$accuracy = 0.05; last}
-    elsif ($_ eq "-a3") {$accuracy = 0.01; last}
-    elsif ($_ eq "-a4") {$accuracy = 0.005; last}
-    elsif ($_ eq "-a5") {$accuracy = 0.001; last}
+    if ($_ eq "-a1") {$accuracy = 0.1; $s_f_vector = 1; last}
+    elsif ($_ eq "-a2") {$accuracy = 0.05; $s_f_vector = 2; last}
+    elsif ($_ eq "-a3") {$accuracy = 0.01; $s_f_vector = 2; last}
+    elsif ($_ eq "-a4") {$accuracy = 0.005; $s_f_vector = 3; last}
+    elsif ($_ eq "-a5") {$accuracy = 0.001; $s_f_vector = 3; last}
     else {$accuracy = 0.01}
 }
 
 foreach (@ARGV) {
     # Number of significant figures in the output result
-    if ($_ eq "-o1") {$significant_figures = 1; last}
-    elsif ($_ eq "-o2") {$significant_figures = 2; last}
-    elsif ($_ eq "-o3") {$significant_figures = 3; last}
-    elsif ($_ eq "-o4") {$significant_figures = 4; last}
-    elsif ($_ eq "-o5") {$significant_figures = 5; last}
-    else {$significant_figures = 3}
+    if ($_ eq "-o1") {$s_f_moment = 1; last}
+    elsif ($_ eq "-o2") {$s_f_moment = 2; last}
+    elsif ($_ eq "-o3") {$s_f_moment = 3; last}
+    elsif ($_ eq "-o4") {$s_f_moment = 4; last}
+    elsif ($_ eq "-o5") {$s_f_moment = 5; last}
+    else {$s_f_moment = 3}
 }
 
 foreach (@ARGV) {
@@ -178,7 +178,7 @@ printf OUTPUT "|%-47s|\n", "Moments of inertia, Da*A^2";
 print OUTPUT "$small_space\n";
 printf OUTPUT "|%-23s|%-23s|\n", "Ix", "Iz";
 print OUTPUT "$small_space\n";
-printf OUTPUT "|%-23.${significant_figures}f|%-23.${significant_figures}f|\n", $I_min, $I_max;
+printf OUTPUT "|%-23.${s_f_moment}f|%-23.${s_f_moment}f|\n", $I_min, $I_max;
 print OUTPUT "$small_space\n";
 
 my @XaYaZa_MIN = &return_XaYaZa_MIN($I_min);
@@ -191,9 +191,9 @@ if ($direct_vector_output) {
     print OUTPUT "$small_space\n";
     printf OUTPUT "|%11s|%-11s|%-11s|%-11s|\n", "", "i", "j", "k";
     print OUTPUT "$small_space\n";
-    printf OUTPUT "|%-11s|%-11s|%-11s|%-11s|\n", "a_x", $XaYaZa_MIN[0], $XaYaZa_MIN[1], $XaYaZa_MIN[2];
+    printf OUTPUT "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_x", $XaYaZa_MIN[0], $XaYaZa_MIN[1], $XaYaZa_MIN[2];
     print OUTPUT "$small_space\n";
-    printf OUTPUT "|%-11s|%-11s|%-11s|%-11s|\n", "a_z", $XaYaZa_MAX[0], $XaYaZa_MAX[1], $XaYaZa_MAX[2];
+    printf OUTPUT "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_z", $XaYaZa_MAX[0], $XaYaZa_MAX[1], $XaYaZa_MAX[2];
     print OUTPUT "$small_space\n";
 }
 
