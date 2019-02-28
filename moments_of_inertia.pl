@@ -36,7 +36,7 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i key is checked below
-my $version = "1.1_git_9";
+my $version = "1.1_git_10";
 my ($accuracy, $significant_figures, $direct_vector_output);
 
 foreach (@ARGV) {
@@ -149,7 +149,7 @@ print OUTPUT "$small_space\n";
 # @I is array of inertia moments, and @XaYaZa is array of coordinates of the directing vectors of the lines
 # corresponding to this moment of inertia. The lines take all the spatial directions and for each straight line
 # the moment of inertia of the molecule is calculated relative to this line.
-my (@I, @XaYaZa);
+my (@I, @X_a, @Y_a, @Z_a);
 
 for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
     for (my $Y_a = -1; $Y_a <= 1; $Y_a = $Y_a + $accuracy) {
@@ -160,13 +160,14 @@ for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
                 $I += $Ii;
             }
             push @I, $I;
-            push @XaYaZa, ($X_a . ' ' . $Y_a . ' ' . $Z_a);
+            push @X_a, $X_a;
+            push @Y_a, $Y_a;
+            push @Z_a, $Z_a;
         }
     }
 }
 
 # Find Ix, Iz and its directing vector сoordinates
-
 my @I_sort = sort { $a <=> $b } @I;
 my $I_min = $I_sort[0];
 my $I_max = $I_sort[-1];
@@ -204,7 +205,6 @@ foreach (@ARGV) {
         print OUTPUT "Initial data:\n";
         foreach (@initial_data) {printf OUTPUT "%-6s %8s %8s %8s\n", (split)[0], (split)[1], (split)[2], (split)[3]}
         print OUTPUT "\n";
-        last;
     }
 }
 
@@ -217,7 +217,7 @@ close OUTPUT;
 # =========================== Functions ================================
 # ======================================================================
 
-# The function returns the distance between the atom and the line defined by the directing vector c = (X_a; Y_a; Z_a):
+# The function returns the distance between the atom and the line defined by the directing vector a = (X_a; Y_a; Z_a):
 # &distance(x, y, z, X_a, Y_a, Z_a)
 sub distance {
     my $u_x = $X_c - $_[0];
@@ -237,10 +237,11 @@ sub distance {
 # &return_XaYaZa_MIN($I_min)
 # &return_XaYaZa_MAX($I_max)
 sub return_XaYaZa_MIN {
+    my @coord_MIN;
     my $count = 0;
     foreach (@I) {
         if ($_ =~ /$I_min/) {
-            my @coord_MIN = split /\s+/, $XaYaZa[$count];
+            @coord_MIN = ($X_a[$count], $Y_a[$count], $Z_a[$count]);
             return @coord_MIN;
         }
         $count++;
@@ -248,10 +249,11 @@ sub return_XaYaZa_MIN {
 }
 
 sub return_XaYaZa_MAX {
+    my @coord_MAX;
     my $count = 0;
     foreach (@I) {
         if ($_ =~ /$I_max/) {
-            my @coord_MAX = split /\s+/, $XaYaZa[$count];
+            @coord_MAX = ($X_a[$count], $Y_a[$count], $Z_a[$count]);
             return @coord_MAX;
         }
         $count++;
