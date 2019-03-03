@@ -36,7 +36,7 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i key is checked below
-my $version = "1.1_git_12";
+my $version = "1.1_git_13";
 my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output);
 
 foreach (@ARGV) {
@@ -73,7 +73,10 @@ foreach (@ARGV) {
         $s_f_vector = 3;
         last;
     }
-    else {$accuracy = 0.01}
+    else {
+        $accuracy = 0.01;
+        $s_f_vector = 2;
+    }
 }
 
 foreach (@ARGV) {
@@ -210,20 +213,59 @@ for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
 
 # Find Ix, Iz and its directing vector сoordinates
 my @I_sort = sort { $a <=> $b } @I;
-my $I_min = $I_sort[0];
-my $I_max = $I_sort[-1];
+my $I_x = $I_sort[0];
+my $I_z = $I_sort[-1];
 
+my @XaYaZa_Ix = &return_XaYaZa_Ix($I_x);
+my @XaYaZa_Iz = &return_XaYaZa_Iz($I_z);
+
+# Calculation of the directing vector for the y axis
+# The equations of two planes plane1 and plane2 are calculated, the intersection of which gives the equation for the axis of rotation y.
+my $a_x = $XaYaZa_Ix[0];
+my $a_y = $XaYaZa_Ix[1];
+my $a_z = $XaYaZa_Ix[2];
+
+my $c_x = $XaYaZa_Iz[0];
+my $c_y = $XaYaZa_Iz[1];
+my $c_z = $XaYaZa_Iz[2];
+
+my $i = $a_y * $c_z - $a_z * $c_y;
+my $j = -1 * ($a_x * $c_z - $a_z * $c_x);
+my $k = $a_x * $c_y - $a_y * $c_x;
+
+my $plane1_x = $a_y * $k - $a_z * $j;
+my $plane1_y = $a_z * $i - $a_x * $k;
+my $plane1_z = $a_x * $j - $a_y * $i;
+# Free term in the plane 1 equation
+#my $plane1_libre = $a_z * $j * $X_c - $a_x * $k * $X_c + $a_x * $k * $Y_c - $a_z * $i * $Y_c + $a_x * $j * $Z_c - $a_y * $i * $Z_c;
+
+my $plane2_x = $c_y * $k - $c_z * $j;
+my $plane2_y = $c_z * $i - $c_x * $k;
+my $plane2_z = $c_x * $j - $c_y * $i;
+# Free term in the plane 1 equation
+#my $plane2_libre = $b_z * $j * $X_c - $b_x * $k * $X_c + $b_x * $k * $Y_c - $b_z * $i * $Y_c + $b_x * $j * $Z_c - $b_y * $i * $Z_c;
+
+my $b_x = $plane1_y * $plane2_z - $plane1_z * $plane2_y;
+my $b_y = $plane1_z * $plane2_x - $plane1_x * $plane2_z;
+my $b_z = $plane1_x * $plane2_y - $plane1_y * $plane2_x;
+
+# Find Iy
+my $I_y = 0;
+for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
+    my $Ii = $masses[$n] * (&distance($X[$n], $Y[$n], $Z[$n], $b_x, $b_y, $b_z)) ** 2;
+    $I_y += $Ii;
+}
+
+# Output moments of inertia
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
 printf OUTPUT "|%-47s|\n", "Moments of inertia, Da*A^2";
 print OUTPUT "$small_space\n";
-printf OUTPUT "|%-23s|%-23s|\n", "Ix", "Iz";
+printf OUTPUT "|%-15s|%-15s|%-15s|\n", "Ix", "Iy", "Iz";
 print OUTPUT "$small_space\n";
-printf OUTPUT "|%-23.${s_f_moment}f|%-23.${s_f_moment}f|\n", $I_min, $I_max;
+printf OUTPUT "|%-15.${s_f_moment}f|%-15.${s_f_moment}f|%-15.${s_f_moment}f|\n", $I_x, $I_y, $I_z;
 print OUTPUT "$small_space\n";
 
-my @XaYaZa_MIN = &return_XaYaZa_MIN($I_min);
-my @XaYaZa_MAX = &return_XaYaZa_MAX($I_max);
 
 if ($direct_vector_output) {
     print OUTPUT "\n";
@@ -232,9 +274,11 @@ if ($direct_vector_output) {
     print OUTPUT "$small_space\n";
     printf OUTPUT "|%11s|%-11s|%-11s|%-11s|\n", "", "i", "j", "k";
     print OUTPUT "$small_space\n";
-    printf OUTPUT "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_x", $XaYaZa_MIN[0], $XaYaZa_MIN[1], $XaYaZa_MIN[2];
+    printf OUTPUT "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_x", $a_x, $a_y, $a_z;
     print OUTPUT "$small_space\n";
-    printf OUTPUT "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_z", $XaYaZa_MAX[0], $XaYaZa_MAX[1], $XaYaZa_MAX[2];
+    printf OUTPUT "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_y", $b_x, $b_y, $b_z;
+    print OUTPUT "$small_space\n";
+    printf OUTPUT "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_z", $c_x, $c_y, $c_z;
     print OUTPUT "$small_space\n";
 }
 
@@ -275,13 +319,13 @@ sub distance {
 
 # The functions returns the value of the coordinates of the directing vector according to
 # the number of minimum or maximum moment of inertia in the corresponding array:
-# &return_XaYaZa_MIN($I_min)
-# &return_XaYaZa_MAX($I_max)
-sub return_XaYaZa_MIN {
+# &return_XaYaZa_Ix($I_x)
+# &return_XaYaZa_Iz($I_z)
+sub return_XaYaZa_Ix {
     my @coord_MIN;
     my $count = 0;
     foreach (@I) {
-        if ($_ =~ /$I_min/) {
+        if ($_ =~ /$I_x/) {
             @coord_MIN = ($X_a[$count], $Y_a[$count], $Z_a[$count]);
             return @coord_MIN;
         }
@@ -289,11 +333,11 @@ sub return_XaYaZa_MIN {
     }
 }
 
-sub return_XaYaZa_MAX {
+sub return_XaYaZa_Iz {
     my @coord_MAX;
     my $count = 0;
     foreach (@I) {
-        if ($_ =~ /$I_max/) {
+        if ($_ =~ /$I_z/) {
             @coord_MAX = ($X_a[$count], $Y_a[$count], $Z_a[$count]);
             return @coord_MAX;
         }
