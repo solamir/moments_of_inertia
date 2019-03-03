@@ -36,8 +36,8 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result
 # -d - display the coordinates of the directing vectors
 # -i key is checked below
-my $version = "1.1_git_13";
-my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output);
+my $version = "1.1_git_14";
+my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data);
 
 foreach (@ARGV) {
    if ($_ eq "-v") {
@@ -107,6 +107,13 @@ foreach (@ARGV) {
 foreach (@ARGV) {
     if ($_ eq "-d") {
         $direct_vector_output = "true";
+        last;
+    }
+}
+
+foreach (@ARGV) {
+    if ($_ eq "-i") {
+        $displaying_initial_data = "true";
         last;
     }
 }
@@ -266,7 +273,7 @@ print OUTPUT "$small_space\n";
 printf OUTPUT "|%-15.${s_f_moment}f|%-15.${s_f_moment}f|%-15.${s_f_moment}f|\n", $I_x, $I_y, $I_z;
 print OUTPUT "$small_space\n";
 
-
+# Displaying direct vectors coordinates
 if ($direct_vector_output) {
     print OUTPUT "\n";
     print OUTPUT "$small_space\n";
@@ -283,14 +290,12 @@ if ($direct_vector_output) {
 }
 
 # Displaying initial data
-foreach (@ARGV) {
-    if ($_ eq "-i") {
-        my @initial_data = map $_ . "\n", @xyz;
-        print OUTPUT "\n";
-        print OUTPUT "Initial data:\n";
-        foreach (@initial_data) {printf OUTPUT "%-6s %8s %8s %8s\n", (split)[0], (split)[1], (split)[2], (split)[3]}
-        print OUTPUT "\n";
-    }
+if ($displaying_initial_data) {
+    my @initial_data = map $_ . "\n", @xyz;
+    print OUTPUT "\n";
+    print OUTPUT "Initial data:\n";
+    foreach (@initial_data) {printf OUTPUT "%-6s %8s %8s %8s\n", (split)[0], (split)[1], (split)[2], (split)[3]}
+    print OUTPUT "\n";
 }
 
 my $space = "-" x 55;
