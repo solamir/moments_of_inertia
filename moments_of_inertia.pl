@@ -37,14 +37,14 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result (default is -o3)
 # -d - display the coordinates of the directing vectors
 # -i - displaying initial data
-my $version = '1.1_git_16';
+my $version = '1.1_git_17';
 my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data);
 
 foreach (@ARGV) {
-   if ($_ eq '-v') {
+    if ($_ eq '-v') {
        print "This is program version $version\n";
        exit;
-       } 
+    } 
 }
 
 foreach (@ARGV) {
@@ -198,7 +198,8 @@ my $X_c = $sum_Xm / $sum_m;
 my $Y_c = $sum_Ym / $sum_m;
 my $Z_c = $sum_Zm / $sum_m;
 
-# Displays the coordinates of the center of mass. Coordinates have the same accuracy as the coordinates in the source file
+# Displays the coordinates of the center of mass
+# Coordinates have the same accuracy as the coordinates in the source file
 my $small_space = "-" x 49;
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
@@ -242,7 +243,8 @@ my @XaYaZa_Iz = &return_XaYaZa_Iz($I_z);
 
 # Calculation of the directing vector for the y axis
 # Axis y is perpendicular at the same time axis x and axis z
-# The equations of two planes plane1 and plane2 are calculated, the intersection of which gives the equation for the axis of rotation y.
+# The equations of two planes plane1 and plane2 are calculated,
+# the intersection of which gives the equation for the axis of rotation y.
 
 # Сoordinates of the direction vectors of the axes x and z
 my $a_x = $XaYaZa_Ix[0];
@@ -261,13 +263,15 @@ my $plane1_x = $a_y * $k - $a_z * $j;
 my $plane1_y = $a_z * $i - $a_x * $k;
 my $plane1_z = $a_x * $j - $a_y * $i;
 # Free term in the plane 1 equation
-#my $plane1_libre = $a_z * $j * $X_c - $a_x * $k * $X_c + $a_x * $k * $Y_c - $a_z * $i * $Y_c + $a_x * $j * $Z_c - $a_y * $i * $Z_c;
+#my $plane1_l = $a_z * $j * $X_c - $a_x * $k * $X_c + $a_x * $k * $Y_c - 
+#$a_z * $i * $Y_c + $a_x * $j * $Z_c - $a_y * $i * $Z_c;
 
 my $plane2_x = $c_y * $k - $c_z * $j;
 my $plane2_y = $c_z * $i - $c_x * $k;
 my $plane2_z = $c_x * $j - $c_y * $i;
 # Free term in the plane 1 equation
-#my $plane2_libre = $b_z * $j * $X_c - $b_x * $k * $X_c + $b_x * $k * $Y_c - $b_z * $i * $Y_c + $b_x * $j * $Z_c - $b_y * $i * $Z_c;
+#my $plane2_l = $b_z * $j * $X_c - $b_x * $k * $X_c + $b_x * $k * $Y_c - 
+#$b_z * $i * $Y_c + $b_x * $j * $Z_c - $b_y * $i * $Z_c;
 
 my $b_x = $plane1_y * $plane2_z - $plane1_z * $plane2_y;
 my $b_y = $plane1_z * $plane2_x - $plane1_x * $plane2_z;
@@ -325,7 +329,8 @@ close OUTPUT;
 # =========================== Functions ================================
 # ======================================================================
 
-# The function returns the distance between the atom and the line defined by the directing vector a = (X_a; Y_a; Z_a):
+# The function returns the distance between the atom and 
+# the line defined by the directing vector a = (X_a; Y_a; Z_a):
 # &distance(x, y, z, X_a, Y_a, Z_a)
 sub distance {
     my $u_x = $X_c - $_[0];
