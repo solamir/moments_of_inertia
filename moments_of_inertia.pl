@@ -1,15 +1,16 @@
 #!/usr/bin/env perl
 
-# ===============================================================================================
-# This program is designed to calculate the minimum and maximum moments of inertia of a molecule,
-# given by the coordinates of atoms in three-dimensional space as part of the structure-property
-# studies carried out at the D. Mendeleev University of Chemical Technology of Russia. For all
-# questions write to Mikhail Koverda (m.kov@pm.me)
-# ===============================================================================================
+# ==============================================================================================
+# This program is designed to calculate the moments of inertia of a molecule (Ix, Iy and Iz,
+# where Ix is a minimum moment and Iz is a maximum moment), given by the coordinates of atoms in
+# three-dimensional space as part of the structure-property studies carried out at the
+# D. Mendeleev University of Chemical Technology of Russia. For all questions write to
+# Mikhail Koverda (m.kov@pm.me)
+# ==============================================================================================
 
 use 5.010;
 use strict;
-use warnings;
+#use warnings;
 
 # Atomic mass table of chemical elements in Daltons
 my %atomic_masses = (
@@ -33,14 +34,14 @@ my %atomic_masses = (
 # Checking keys and setting appropriate values:
 # -v - display the program version
 # -a[1-5] - accuracy of the calculation of the moments of inertia (default is -a3)
-# -o[1-5] - number of significant figures in the output result
+# -o[1-5] - number of significant figures in the output result (default is -o3)
 # -d - display the coordinates of the directing vectors
-# -i key is checked below
-my $version = "1.1_git_14";
+# -i - displaying initial data
+my $version = '1.1_git_15';
 my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data);
 
 foreach (@ARGV) {
-   if ($_ eq "-v") {
+   if ($_ eq '-v') {
        print "This is program version $version\n";
        exit;
        } 
@@ -48,27 +49,27 @@ foreach (@ARGV) {
 
 foreach (@ARGV) {
     # Accuracy of the calculation
-    if ($_ eq "-a1") {
+    if ($_ eq '-a1') {
         $accuracy = 0.1;
         $s_f_vector = 1;
         last;
     }
-    elsif ($_ eq "-a2") {
+    elsif ($_ eq '-a2') {
         $accuracy = 0.05;
         $s_f_vector = 2;
         last;
     }
-    elsif ($_ eq "-a3") {
+    elsif ($_ eq '-a3') {
         $accuracy = 0.01;
         $s_f_vector = 2;
         last;
     }
-    elsif ($_ eq "-a4") {
+    elsif ($_ eq '-a4') {
         $accuracy = 0.005;
         $s_f_vector = 3;
         last;
     }
-    elsif ($_ eq "-a5") {
+    elsif ($_ eq '-a5') {
         $accuracy = 0.001;
         $s_f_vector = 3;
         last;
@@ -81,44 +82,46 @@ foreach (@ARGV) {
 
 foreach (@ARGV) {
     # Number of significant figures in the output result
-    if ($_ eq "-o1") {
+    if ($_ eq '-o1') {
         $s_f_moment = 1;
         last;
     }
-    elsif ($_ eq "-o2") {
+    elsif ($_ eq '-o2') {
         $s_f_moment = 2;
         last;
     }
-    elsif ($_ eq "-o3") {
+    elsif ($_ eq '-o3') {
         $s_f_moment = 3;
         last;
     }
-    elsif ($_ eq "-o4") {
+    elsif ($_ eq '-o4') {
         $s_f_moment = 4;
         last;
     }
-    elsif ($_ eq "-o5") {
+    elsif ($_ eq '-o5') {
         $s_f_moment = 5;
         last;
     }
     else {$s_f_moment = 3}
 }
 
+# Display the coordinates of the directing vectors
 foreach (@ARGV) {
-    if ($_ eq "-d") {
-        $direct_vector_output = "true";
+    if ($_ eq '-d') {
+        $direct_vector_output = 'true';
         last;
     }
 }
 
 foreach (@ARGV) {
-    if ($_ eq "-i") {
-        $displaying_initial_data = "true";
+    if ($_ eq '-i') {
+        $displaying_initial_data = 'true';
         last;
     }
 }
 
 # Opening a file and reading information
+# Lines containing the coordinates of the atoms are copied to the array @xyz.
 my $filename = $ARGV[-1];
 open(DATA, $filename) or die "Could not open file $filename $!";
 chomp(my @xyz = <DATA>);
@@ -141,7 +144,7 @@ print OUTPUT "Calculation for data from file $ARGV[-1]\n";
 print OUTPUT "\n";
 print OUTPUT "The calculation with step of the directing vector is $accuracy\n";
 
-# Delete first and last whitespace
+# Delete first and last whitespace in array @xyz
 foreach (@xyz) {s/^\s+|\s+$//g}
 
 # Replacing the character of an element in a string with the value of its atomic mass
@@ -173,6 +176,8 @@ foreach (@xyz) {push @Y, (split)[2]}
 foreach (@xyz) {push @Z, (split)[3]}
 
 # Finding the coordinates of the center of mass
+# The coordinates of the center of mass are found as the weighted average coordinates of the atom,
+# taking into account their mass
 my ($sum_Xm, $sum_Ym, $sum_Zm, $sum_m);
 
 for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
@@ -186,6 +191,7 @@ my $X_c = $sum_Xm / $sum_m;
 my $Y_c = $sum_Ym / $sum_m;
 my $Z_c = $sum_Zm / $sum_m;
 
+# Displays the coordinates of the center of mass. Coordinates have the same accuracy as the coordinates in the source file
 my $small_space = "-" x 49;
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
@@ -223,11 +229,15 @@ my @I_sort = sort { $a <=> $b } @I;
 my $I_x = $I_sort[0];
 my $I_z = $I_sort[-1];
 
+# Finding the coordinates of the directing vectors
 my @XaYaZa_Ix = &return_XaYaZa_Ix($I_x);
 my @XaYaZa_Iz = &return_XaYaZa_Iz($I_z);
 
 # Calculation of the directing vector for the y axis
+# Axis y is perpendicular at the same time axis x and axis z
 # The equations of two planes plane1 and plane2 are calculated, the intersection of which gives the equation for the axis of rotation y.
+
+# Сoordinates of the direction vectors of the axes x and z
 my $a_x = $XaYaZa_Ix[0];
 my $a_y = $XaYaZa_Ix[1];
 my $a_z = $XaYaZa_Ix[2];
@@ -263,7 +273,7 @@ for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
     $I_y += $Ii;
 }
 
-# Output moments of inertia
+# Output all moments of inertia
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
 printf OUTPUT "|%-47s|\n", "Moments of inertia, Da*A^2";
@@ -298,6 +308,7 @@ if ($displaying_initial_data) {
     print OUTPUT "\n";
 }
 
+# Final delimiter
 my $space = "-" x 55;
 print OUTPUT "$space\n";
 
