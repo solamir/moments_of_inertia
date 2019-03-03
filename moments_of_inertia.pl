@@ -37,7 +37,7 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result (default is -o3)
 # -d - display the coordinates of the directing vectors
 # -i - displaying initial data
-my $version = '1.1_git_15';
+my $version = '1.1_git_16';
 my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data);
 
 foreach (@ARGV) {
@@ -166,6 +166,13 @@ foreach (@xyz) {
     if ($atom_data[0] =~ /Br$/) {$atom_data[0] = $atomic_masses{"Br"}}
     if ($atom_data[0] =~ /I$/) {$atom_data[0] = $atomic_masses{"I"}}                        
     $_ = "@atom_data";
+}
+
+# Checking the correctness of chemical elements in the input file
+foreach (@xyz) {
+    if ($_ =~ /^\D/) {
+        die "Error! Unknown atom in source file!\n";
+    }
 }
 
 # Сreating masses and coordinates arrays
