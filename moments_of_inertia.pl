@@ -38,7 +38,7 @@ my %atomic_masses = (
 # -d - display the coordinates of the directing vectors
 # -i - displaying initial data
 # -l - create a detailed log file report
-my $version = '1.1_git_19';
+my $version = '1.2';
 my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data, $log);
 
 foreach (@ARGV) {

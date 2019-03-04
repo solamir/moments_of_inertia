@@ -1,6 +1,6 @@
 # Moment of inertia
 
-The program calculates the minimum (*Ix*) and maximum (*Iz*) moments of inertia of the molecule using atomic coordinates from the [XYZ file](https://en.wikipedia.org/wiki/XYZ_file_format).
+The program calculates the moments of inertia of the molecules Ix, Iy and Iz relative to the x, y and z axes (the axis of rotation with the minimum moment of inertia is taken as the x axis, the y and z axes are perpendicular to it and to each other). The coordinates for the atoms from the [XYZ file](https://en.wikipedia.org/wiki/XYZ_file_format) are used as data for the calculation.
 
 ## Software requirements
 
@@ -17,11 +17,11 @@ $ ./moments_of_inertia.pl filename.xyz
 The program will create a text file *filename.txt* with the results of the calculation in the directory where the file *filename.xyz* is located. Examples of source XYZ files can be found in the *Examples* folder. For example, launching the program with the file *Pentane.xyz* will create the file *Pentane.txt* with the results of the calculation:
 
 ```
-This is Moment of inertia version 1.1
-System date is Mon Feb 25 20:18:04 2019
-Calculation for data from file /mnt/e/Pentane.xyz
+This is Moment of inertia version 1.2
+System date is Mon Mar  4 18:45:46 2019
+Calculation for data from file /mnt/d/Pentane.xyz
 
-The calculation with step of the directing vector is 0.05
+Step of the directing vector is 0.01
 
 -------------------------------------------------
 |Coordinates of the center of gravity           |
@@ -34,9 +34,9 @@ The calculation with step of the directing vector is 0.05
 -------------------------------------------------
 |Moments of inertia, Da*A^2                     |
 -------------------------------------------------
-|Ix                     |Iz                     |
+|Ix             |Iy             |Iz             |
 -------------------------------------------------
-|29.989                 |269.277                |
+|29.987         |255.058        |269.277        |
 -------------------------------------------------
 -------------------------------------------------------
 ```
@@ -53,16 +53,18 @@ You can set the parameters of the program using the following startup keys:
 
 ```-i``` - Display the initial information for the calculation.
 
+```-l``` - Create a log file with a detailed report.
+
 For example, the result of the calculation for the pentane molecule using the XYZ file from the *Examples* folder with the keys **-a2** **-o4** **-d** will look like this:
 
 ```
 $ ./moments_of_inertia.pl -a2 -o4 -d ./Pentane.xyz
 $ cat ./Pentane.txt
-This is Moment of inertia version 1.1
-System date is Mon Feb 25 20:24:44 2019
-Calculation for data from file /mnt/e/Pentane.xyz
+This is Moment of inertia version 1.2
+System date is Mon Mar  4 19:04:56 2019
+Calculation for data from file /mnt/d/Pentane.xyz
 
-The calculation with step of the directing vector is 0.05
+Step of the directing vector is 0.05
 
 -------------------------------------------------
 |Coordinates of the center of gravity           |
@@ -75,9 +77,9 @@ The calculation with step of the directing vector is 0.05
 -------------------------------------------------
 |Moments of inertia, Da*A^2                     |
 -------------------------------------------------
-|Ix                     |Iz                     |
+|Ix             |Iy             |Iz             |
 -------------------------------------------------
-|29.9888                |269.2769               |
+|29.9888        |255.0583       |269.2769       |
 -------------------------------------------------
 
 -------------------------------------------------
@@ -85,9 +87,11 @@ The calculation with step of the directing vector is 0.05
 -------------------------------------------------
 |           |i          |j          |k          |
 -------------------------------------------------
-|a_x        |0.55       |0.25       |-0.3       |
+|a_x        |0.55       |0.25       |-0.30      |
 -------------------------------------------------
-|a_z        |0          |-0.85      |-0.7       |
+|a_y        |0.24       |-0.21      |0.26       |
+-------------------------------------------------
+|a_z        |0.00       |0.85       |0.70       |
 -------------------------------------------------
 -------------------------------------------------------
 ```
@@ -143,3 +147,4 @@ The program works according to the following algorithm:
 5. For each position of the axis in space, the moment of inertia is calculated relative to this axis, considering the distance of each atom to this axis and stored in memory.
 6. After the calculation of the moments of inertia for all positions of the axis, the program selects the largest and smallest moments of inertia and returns their values in units Da*Å^2, as well as the coordinates of the direction vectors ***a*** and ***b*** for these axes.
 7. The resulting axes are always perpendicular to each other, as can be easily seen by calculating the scalar product of the directing vectors for these axes.
+8. The equation of a straight line, perpendicular to two found axes, is found. With respect to this axis, the third value of the moment of inertia (Iy) is calculated.
