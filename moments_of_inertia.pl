@@ -37,8 +37,9 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result (default is -o3)
 # -d - display the coordinates of the directing vectors
 # -i - displaying initial data
-my $version = '1.1_git_18';
-my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data);
+# -l - create a detailed log file report
+my $version = '1.1_git_19';
+my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data, $log);
 
 foreach (@ARGV) {
     if ($_ eq '-v') {
@@ -121,6 +122,14 @@ foreach (@ARGV) {
     }
 }
 
+# Create a detailed log file report
+foreach (@ARGV) {
+    if ($_ eq '-l') {
+        $log = 'true';
+        last;
+    }
+}
+
 # Opening a file and reading information
 # Lines containing the coordinates of the atoms are copied to the array @xyz.
 my $filename = $ARGV[-1];
@@ -136,17 +145,50 @@ shift @xyz;
 
 # Displays preliminary information about the calculation
 $filename =~ s/...$/txt/; # Replacing file name extension with .txt
-open OUTPUT, ">>", ${filename};
+open OUTPUT, ">>", $filename;
 print OUTPUT "This is Moment of inertia version $version\n";
 
 my $time = localtime;
 print OUTPUT "System date is $time\n";
 print OUTPUT "Calculation for data from file $ARGV[-1]\n";
 print OUTPUT "\n";
-print OUTPUT "The calculation with step of the directing vector is $accuracy\n";
+print OUTPUT "Step of the directing vector is $accuracy\n";
+
+my $small_space = "-" x 49;
+
+if ($log) {
+    my $logfile = $filename;
+    $logfile =~ s/...$/log/;
+    open LOGFILE, ">", $logfile;
+    print LOGFILE "This is Moment of inertia version $version\n";
+    print LOGFILE "System date is $time\n";
+    print LOGFILE "Calculation for data from file $ARGV[-1]\n";
+    print LOGFILE "Output file is $filename\n";
+    print LOGFILE "Log file is $logfile\n";
+    print LOGFILE "\n";
+    print LOGFILE "Starting parameters is \"@ARGV\"\n";
+    print LOGFILE "\n";
+    print LOGFILE "$small_space\n";
+    print LOGFILE "Program parameters:\n";
+    print LOGFILE "Step of the directing vector = $accuracy\n";
+    print LOGFILE "Number of significant figures in the output result = $s_f_moment\n";
+
+    if ($direct_vector_output) {print LOGFILE "Display the coordinates of the directing vectors = true\n"}
+    else {print LOGFILE "Display the coordinates of the directing vectors = false\n"}
+
+    if ($displaying_initial_data) {print LOGFILE "Displaying initial data = true\n"}
+    else {print LOGFILE "Displaying initial data = false\n"}
+}
 
 # Delete first and last whitespace in array @xyz
 foreach (@xyz) {s/^\s+|\s+$//g}
+
+if ($log) {
+    print LOGFILE "\n";
+    print LOGFILE "$small_space\n";
+    print LOGFILE "Input data for calculation (array \@xyz):\n";
+    foreach (@xyz) {print LOGFILE "$_\n"}
+}
 
 # Replacing the character of an element in a string with the value of its atomic mass
 foreach (@xyz) {
@@ -176,6 +218,13 @@ foreach (@xyz) {
     }
 }
 
+if ($log) {
+    print LOGFILE "\n";
+    print LOGFILE "$small_space\n";
+    print LOGFILE "Data after replacing characters with their atomic masses (array \@xyz):\n";
+    foreach (@xyz) {printf LOGFILE "%-8s %8s %8s %8s\n", (split)[0], (split)[1], (split)[2], (split)[3]}
+}
+
 # Сreating masses and coordinates arrays
 my (@masses, @X, @Y, @Z);
 foreach (@xyz) {push @masses, (split)[0]}
@@ -199,9 +248,26 @@ my $X_c = $sum_Xm / $sum_m;
 my $Y_c = $sum_Ym / $sum_m;
 my $Z_c = $sum_Zm / $sum_m;
 
+if ($log) {
+    print LOGFILE "\n";
+    print LOGFILE "$small_space\n";
+    print LOGFILE "Finding the coordinates of the center of mass:\n";
+    print LOGFILE "\$sum_Xm = $sum_Xm\n";
+    print LOGFILE "\$sum_Ym = $sum_Ym\n";
+    print LOGFILE "\$sum_Zm = $sum_Zm\n";
+    print LOGFILE "\$sum_m = $sum_m\n";
+    print LOGFILE "\n";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-47s|\n", "Coordinates of the center of gravity";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-15s|%-15s|%-15s|\n", "x", "y", "z";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-15.5f|%-15.5f|%-15.5f|\n", $X_c, $Y_c, $Z_c;
+    print LOGFILE "$small_space\n";
+}
+
 # Displays the coordinates of the center of mass
 # Coordinates have the same accuracy as the coordinates in the source file
-my $small_space = "-" x 49;
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
 printf OUTPUT "|%-47s|\n", "Coordinates of the center of gravity";
@@ -230,6 +296,21 @@ for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
             push @Y_a, $Y_a;
             push @Z_a, $Z_a;
         }
+    }
+}
+
+if ($log) {
+    print LOGFILE "\n";
+    print LOGFILE "$small_space\n";
+    print LOGFILE "The search of the moments of inertia with relative to the various\n";
+    print LOGFILE "lines passing through the center of masses:\n";
+    print LOGFILE "\n";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%11s|%-11s|%-11s|%-11s|\n", "I", "X_a", "Y_a", "Z_a";
+    print LOGFILE "$small_space\n";
+    for (my $i = 0; $i <= $#I; $i++) {
+        printf LOGFILE "|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", $I[$i], $X_a[$i], $Y_a[$i], $Z_a[$i];
+        print LOGFILE "$small_space\n";
     }
 }
 
@@ -307,6 +388,19 @@ print OUTPUT "$small_space\n";
 printf OUTPUT "|%-15.${s_f_moment}f|%-15.${s_f_moment}f|%-15.${s_f_moment}f|\n", $I_x, $I_y, $I_z;
 print OUTPUT "$small_space\n";
 
+if ($log) {
+    print LOGFILE "\n";
+    print LOGFILE "$small_space\n";
+    print LOGFILE "All moments of inertia:\n";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-47s|\n", "Moments of inertia, Da*A^2";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-15s|%-15s|%-15s|\n", "Ix", "Iy", "Iz";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-15.${s_f_moment}f|%-15.${s_f_moment}f|%-15.${s_f_moment}f|\n", $I_x, $I_y, $I_z;
+    print LOGFILE "$small_space\n";
+}
+
 # Displaying direct vectors coordinates
 if ($direct_vector_output) {
     print OUTPUT "\n";
@@ -323,6 +417,21 @@ if ($direct_vector_output) {
     print OUTPUT "$small_space\n";
 }
 
+if ($log) {
+    print LOGFILE "\n";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-47s|\n", "Coordinates of the directing vectors";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%11s|%-11s|%-11s|%-11s|\n", "", "i", "j", "k";
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_x", $a_x, $a_y, $a_z;
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_y", $b_x, $b_y, $b_z;
+    print LOGFILE "$small_space\n";
+    printf LOGFILE "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_z", $c_x, $c_y, $c_z;
+    print LOGFILE "$small_space\n";    
+}
+
 # Displaying initial data
 if ($displaying_initial_data) {
     my @initial_data = map $_ . "\n", @xyz;
@@ -337,6 +446,8 @@ my $space = "-" x 55;
 print OUTPUT "$space\n";
 
 close OUTPUT;
+
+if ($log) {close LOGFILE}
 
 # ======================================================================
 # =========================== Functions ================================
