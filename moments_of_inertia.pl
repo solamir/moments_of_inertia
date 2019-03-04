@@ -113,6 +113,7 @@ foreach (@ARGV) {
     }
 }
 
+# Displaying initial data
 foreach (@ARGV) {
     if ($_ eq '-i') {
         $displaying_initial_data = 'true';
