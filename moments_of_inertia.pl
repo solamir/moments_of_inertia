@@ -37,7 +37,7 @@ my %atomic_masses = (
 # -o[1-5] - number of significant figures in the output result (default is -o3)
 # -d - display the coordinates of the directing vectors
 # -i - displaying initial data
-my $version = '1.1_git_17';
+my $version = '1.1_git_18';
 my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data);
 
 foreach (@ARGV) {
@@ -238,8 +238,20 @@ my $I_x = $I_sort[0];
 my $I_z = $I_sort[-1];
 
 # Finding the coordinates of the directing vectors
-my @XaYaZa_Ix = &return_XaYaZa_Ix($I_x);
-my @XaYaZa_Iz = &return_XaYaZa_Iz($I_z);
+my @XaYaZa_Ix;
+my @XaYaZa_Iz;
+
+my $count = 0;
+foreach (@I) {
+    if ($_ =~ /$I_x/) {@XaYaZa_Ix = ($X_a[$count], $Y_a[$count], $Z_a[$count])}
+    $count++;
+}
+
+my $count = 0;
+foreach (@I) {
+    if ($_ =~ /$I_z/) {@XaYaZa_Iz = ($X_a[$count], $Y_a[$count], $Z_a[$count])}
+    $count++;
+}
 
 # Calculation of the directing vector for the y axis
 # Axis y is perpendicular at the same time axis x and axis z
@@ -315,7 +327,7 @@ if ($displaying_initial_data) {
     my @initial_data = map $_ . "\n", @xyz;
     print OUTPUT "\n";
     print OUTPUT "Initial data:\n";
-    foreach (@initial_data) {printf OUTPUT "%-6s %8s %8s %8s\n", (split)[0], (split)[1], (split)[2], (split)[3]}
+    foreach (@initial_data) {printf OUTPUT "%-8s %8s %8s %8s\n", (split)[0], (split)[1], (split)[2], (split)[3]}
     print OUTPUT "\n";
 }
 
@@ -343,32 +355,4 @@ sub distance {
 
     my $distance = sqrt($i ** 2 + $j ** 2 + $k ** 2) / sqrt($_[3] ** 2 + $_[4] ** 2 + $_[5] ** 2);
     return $distance;
-}
-
-# The functions returns the value of the coordinates of the directing vector according to
-# the number of minimum or maximum moment of inertia in the corresponding array:
-# &return_XaYaZa_Ix($I_x)
-# &return_XaYaZa_Iz($I_z)
-sub return_XaYaZa_Ix {
-    my @coord_MIN;
-    my $count = 0;
-    foreach (@I) {
-        if ($_ =~ /$I_x/) {
-            @coord_MIN = ($X_a[$count], $Y_a[$count], $Z_a[$count]);
-            return @coord_MIN;
-        }
-        $count++;
-    }
-}
-
-sub return_XaYaZa_Iz {
-    my @coord_MAX;
-    my $count = 0;
-    foreach (@I) {
-        if ($_ =~ /$I_z/) {
-            @coord_MAX = ($X_a[$count], $Y_a[$count], $Z_a[$count]);
-            return @coord_MAX;
-        }
-        $count++;
-    }
 }
