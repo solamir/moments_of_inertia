@@ -38,7 +38,7 @@ my %atomic_masses = (
 # -d - display the coordinates of the directing vectors
 # -i - displaying initial data
 # -l - create a detailed log file report
-my $version = '1.2';
+my $version = '1.2_git_20';
 my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data, $log);
 
 foreach (@ARGV) {
@@ -278,7 +278,7 @@ printf OUTPUT "|%-15.5f|%-15.5f|%-15.5f|\n", $X_c, $Y_c, $Z_c;
 print OUTPUT "$small_space\n";
 
 # The search of the moments of inertia with relative to the various lines passing through the center of masses
-# @I is array of inertia moments, and @XaYaZa is array of coordinates of the directing vectors of the lines
+# @I is array of inertia moments, and @X_a, @Y_a and @Z_a is arrays of coordinates of the directing vectors of the lines
 # corresponding to this moment of inertia. The lines take all the spatial directions and for each straight line
 # the moment of inertia of the molecule is calculated relative to this line.
 my (@I, @X_a, @Y_a, @Z_a);
