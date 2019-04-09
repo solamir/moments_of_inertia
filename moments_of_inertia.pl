@@ -10,7 +10,7 @@
 
 use 5.010;
 use strict;
-#use warnings;
+use warnings;
 
 # Atomic mass table of chemical elements in Daltons
 my %atomic_masses = (
@@ -38,12 +38,13 @@ my %atomic_masses = (
 # -d - display the coordinates of the directing vectors
 # -i - displaying initial data
 # -l - create a detailed log file report
-my $version = '1.2_git_20';
+
 my ($accuracy, $s_f_moment, $s_f_vector, $direct_vector_output, $displaying_initial_data, $log);
+my $version = '1.2_git_21';
 
 foreach (@ARGV) {
     if ($_ eq '-v') {
-       print "This is program version $version\n";
+       print "The version of program is $version\n";
        exit;
     } 
 }
@@ -283,13 +284,12 @@ print OUTPUT "$small_space\n";
 # the moment of inertia of the molecule is calculated relative to this line.
 my (@I, @X_a, @Y_a, @Z_a);
 
-for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy) {
-    for (my $Y_a = -1; $Y_a <= 1; $Y_a = $Y_a + $accuracy) {
-        for (my $Z_a = -1; $Z_a <= 1; $Z_a = $Z_a + $accuracy) {
-            my $I = 0;
+for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + 0.01) {
+    for (my $Y_a = -1; $Y_a <= 1; $Y_a = $Y_a + 0.01) {
+        for (my $Z_a = -1; $Z_a <= 1; $Z_a = $Z_a + 0.01) {
+            my $I;
             for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
-                my $Ii = $masses[$n] * (&distance($X[$n], $Y[$n], $Z[$n], $X_a, $Y_a, $Z_a)) ** 2;
-                $I += $Ii;
+                $I += $masses[$n] * (&distance($X[$n], $Y[$n], $Z[$n], $X_a, $Y_a, $Z_a)) ** 2;
             }
             push @I, $I;
             push @X_a, $X_a;
@@ -320,20 +320,82 @@ my $I_x = $I_sort[0];
 my $I_z = $I_sort[-1];
 
 # Finding the coordinates of the directing vectors
-my @XaYaZa_Ix;
-my @XaYaZa_Iz;
+my (@XaYaZa_Ix, @XaYaZa_Iz);
 
-my $count = 0;
+my $count;
 foreach (@I) {
     if ($_ =~ /$I_x/) {@XaYaZa_Ix = ($X_a[$count], $Y_a[$count], $Z_a[$count])}
     $count++;
 }
 
-my $count = 0;
+$count = 0;
 foreach (@I) {
     if ($_ =~ /$I_z/) {@XaYaZa_Iz = ($X_a[$count], $Y_a[$count], $Z_a[$count])}
     $count++;
 }
+
+@I = ();
+@X_a = ();
+@Y_a = ();
+@Z_a = ();
+
+for (my $X_a = $XaYaZa_Ix[0] - 0.02; $X_a <= $XaYaZa_Ix[0] + 0.02; $X_a = $X_a + 0.001) {
+    for (my $Y_a = $XaYaZa_Ix[1] - 0.02; $Y_a <= $XaYaZa_Ix[1] + 0.02; $Y_a = $Y_a + 0.001) {
+        for (my $Z_a = $XaYaZa_Ix[2] - 0.02; $Z_a <= $XaYaZa_Ix[2] + 0.02; $Z_a = $Z_a + 0.001) {
+            my $I;
+            for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
+                $I += $masses[$n] * (&distance($X[$n], $Y[$n], $Z[$n], $X_a, $Y_a, $Z_a)) ** 2;
+            }
+            push @I, $I;
+            push @X_a, $X_a;
+            push @Y_a, $Y_a;
+            push @Z_a, $Z_a;
+        }
+    }
+}
+
+@I_sort = sort { $a <=> $b } @I;
+$I_x = $I_sort[0];
+
+$count = 0;
+foreach (@I) {
+    if ($_ =~ /$I_x/) {@XaYaZa_Ix = ($X_a[$count], $Y_a[$count], $Z_a[$count])}
+    $count++;
+}
+
+@I = ();
+@X_a = ();
+@Y_a = ();
+@Z_a = ();
+
+for (my $X_a = $XaYaZa_Iz[0] - 0.02; $X_a <= $XaYaZa_Iz[0] + 0.02; $X_a = $X_a + 0.001) {
+    for (my $Y_a = $XaYaZa_Iz[1] - 0.02; $Y_a <= $XaYaZa_Iz[1] + 0.02; $Y_a = $Y_a + 0.001) {
+        for (my $Z_a = $XaYaZa_Iz[2] - 0.02; $Z_a <= $XaYaZa_Iz[2] + 0.02; $Z_a = $Z_a + 0.001) {
+            my $I;
+            for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
+                $I += $masses[$n] * (&distance($X[$n], $Y[$n], $Z[$n], $X_a, $Y_a, $Z_a)) ** 2;
+            }
+            push @I, $I;
+            push @X_a, $X_a;
+            push @Y_a, $Y_a;
+            push @Z_a, $Z_a;
+        }
+    }
+}
+
+@I_sort = sort { $a <=> $b } @I;
+$I_z = $I_sort[-1];
+
+$count = 0;
+foreach (@I) {
+    if ($_ =~ /$I_z/) {@XaYaZa_Iz = ($X_a[$count], $Y_a[$count], $Z_a[$count])}
+    $count++;
+}
+
+@I = ();
+@X_a = ();
+@Y_a = ();
+@Z_a = ();
 
 # Calculation of the directing vector for the y axis
 # Axis y is perpendicular at the same time axis x and axis z
@@ -372,10 +434,9 @@ my $b_y = $plane1_z * $plane2_x - $plane1_x * $plane2_z;
 my $b_z = $plane1_x * $plane2_y - $plane1_y * $plane2_x;
 
 # Find Iy
-my $I_y = 0;
+my $I_y;
 for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
-    my $Ii = $masses[$n] * (&distance($X[$n], $Y[$n], $Z[$n], $b_x, $b_y, $b_z)) ** 2;
-    $I_y += $Ii;
+    $I_y += $masses[$n] * (&distance($X[$n], $Y[$n], $Z[$n], $b_x, $b_y, $b_z)) ** 2;
 }
 
 # Output all moments of inertia

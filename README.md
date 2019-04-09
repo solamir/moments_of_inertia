@@ -137,14 +137,3 @@ H      4.66744      1.54992     -3.22215
 H      6.09853      1.88355     -2.23189
 H      4.66701      2.91854     -2.09234
 ```
-
-The program works according to the following algorithm:
-
-1. Data from the file is read and the symbol of the element is replaced with the value of its atomic mass in Daltons.
-2. Calculate the coordinates of the center of gravity of the molecule.
-3. A straight line is set that passes through the center of gravity of the molecule and has an arbitrary direction vector, for example ***a*** = (0, -1, -1).
-4. The coordinates of the direction vector iteratively change with a certain interval of movement (by specifying the **–a** key) so that the direction of the vector corresponds to all possible directions of the axis of rotation in space, for example, ***ax*** =[0,1], ***ay*** = [-1,1], ***az*** = [-1,1].
-5. For each position of the axis in space, the moment of inertia is calculated relative to this axis, considering the distance of each atom to this axis and stored in memory.
-6. After the calculation of the moments of inertia for all positions of the axis, the program selects the largest and smallest moments of inertia and returns their values in units Da*Å^2, as well as the coordinates of the direction vectors ***a*** and ***b*** for these axes.
-7. The resulting axes are always perpendicular to each other, as can be easily seen by calculating the scalar product of the directing vectors for these axes.
-8. The equation of a straight line, perpendicular to two found axes, is found. With respect to this axis, the third value of the moment of inertia (Iy) is calculated.
