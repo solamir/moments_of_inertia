@@ -10,7 +10,7 @@
 
 use 5.010;
 use strict;
-use warnings;
+#use warnings;
 
 # Displaying version information
 my $version = '1.2_git_22';
@@ -23,7 +23,7 @@ foreach (@ARGV) {
 }
 
 # Setting the accuracy of the calculation and output results
-my ($accuracy_1, $accuracy_2, $limit, $s_f_moment, $s_f_vector, $log);
+my ($accuracy_1, $accuracy_2, $limit, $s_f_moment, $s_f_vector);
 
 foreach (@ARGV) {
     # Accuracy of the calculation
