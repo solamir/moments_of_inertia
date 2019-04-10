@@ -13,11 +13,27 @@ use strict;
 #use warnings;
 
 # Displaying version information
-my $version = '1.2_git_22';
+my $version = '1.2_git_23';
 
 foreach (@ARGV) {
-    if ($_ eq '-v') {
+    if ($_ eq '-v' || $_ eq '--version') {
        print "The version of program is $version\n";
+       exit;
+    } 
+}
+
+# Display of brief help
+foreach (@ARGV) {
+    if ($_ eq '-h' || $_ eq '--help') {
+       print "Usage: ./moment_of_inertia [OPTION] <file>\n";
+       print "\n";
+       print "Use the XYZ file as the input file.\n";
+       print "\n";
+       printf "%-15s%-15s%-15s\n", "Option", "Long option", "Meaning";
+       printf "%-15s%-15s%-15s\n", "-v", "--version", "Show the version number and exit";
+       printf "%-15s%-15s%-15s\n", "-h", "--help", "Show short help and exit";
+       printf "%-30s%-15s\n", "-a[1-3]", "Set calculation accuracy (the bigger, the better),";
+       printf "%30s%-15s\n", "", "default is -a3";
        exit;
     } 
 }
