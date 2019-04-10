@@ -26,7 +26,7 @@ You can set the parameters of the program using the following startup keys:
 
 ```-h (--help)``` Show short help and exit.
 
-```-a[1-3]``` Accuracy counting. Sets the interval of movement of the directing vector for the axis of rotation in space. The smaller the interval, the more accurate and longer the calculation takes place: **-a1** – 0.1; **-a2** – 0.05; **-a3** – 0.01; **-a4** – 0.005;**-a5** – 0.001. The default key is **-a3**.
+```-a[1-3]``` Accuracy counting. Sets the interval of movement of the directing vector for the axis of rotation in space. The smaller the interval, the more accurate and longer the calculation takes place.
 
 | Key | Movement of the directing vector (step 1) | Movement of the directing vector (step 2) |
 |:----:|:----:|:----------:|
