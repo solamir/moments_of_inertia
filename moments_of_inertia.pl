@@ -13,7 +13,7 @@ use strict;
 #use warnings;
 
 # Displaying version information
-my $version = '1.3';
+my $version = '1.3_git_24';
 
 foreach (@ARGV) {
     if ($_ eq '-v' || $_ eq '--version') {
@@ -116,6 +116,7 @@ print OUTPUT "$small_space\n";
 print OUTPUT "Input data for calculation:\n";
 print OUTPUT "\n";
 foreach (@xyz) {print OUTPUT "$_\n"}
+close OUTPUT;
 
 # Delete first and last whitespace in array @xyz
 foreach (@xyz) {s/^\s+|\s+$//g}
@@ -167,11 +168,13 @@ foreach (@xyz) {
     }
 }
 
+open OUTPUT, ">>", $filename;
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
 print OUTPUT "Data after replacing characters with their atomic masses:\n";
 print OUTPUT "\n";
 foreach (@xyz) {printf OUTPUT "%-8s %8s %8s %8s\n", (split)[0], (split)[1], (split)[2], (split)[3]}
+close OUTPUT;
 
 # Сreating masses and coordinates arrays
 my (@masses, @X, @Y, @Z);
@@ -198,6 +201,7 @@ my $Z_c = $sum_Zm / $sum_m;
 
 # Displays the coordinates of the center of mass
 # Coordinates have the same accuracy as the coordinates in the source file
+open OUTPUT, ">>", $filename;
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
 print OUTPUT "Finding the coordinates of the center of mass:\n";
@@ -214,6 +218,7 @@ printf OUTPUT "|%-15s|%-15s|%-15s|\n", "x", "y", "z";
 print OUTPUT "$small_space\n";
 printf OUTPUT "|%-15.5f|%-15.5f|%-15.5f|\n", $X_c, $Y_c, $Z_c;
 print OUTPUT "$small_space\n";
+close OUTPUT;
 
 # The search of the moments of inertia with relative to the various lines passing through the center of masses
 # @I is array of inertia moments, and @X_a, @Y_a and @Z_a is arrays of coordinates of the directing vectors of the lines
@@ -236,20 +241,24 @@ for (my $X_a = 0; $X_a <= 1; $X_a = $X_a + $accuracy_1) {
     }
 }
 
+open OUTPUT, ">>", $filename;
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
 print OUTPUT "Search of the moments of inertia with relative to the various\n";
 print OUTPUT "lines passing through the center of masses\n";
+close OUTPUT;
 
 # Find Ix, Iz and its directing vector сoordinates
 my @I_sort = sort { $a <=> $b } @I;
 my $I_x = $I_sort[0];
 my $I_z = $I_sort[-1];
 
+open OUTPUT, ">>", $filename;
 print OUTPUT "\n";
 print OUTPUT "I_x and I_z values found! (step 1):\n";
 print OUTPUT "I_x = $I_x\n";
 print OUTPUT "I_z = $I_z\n";
+close OUTPUT;
 
 # Finding the coordinates of the directing vectors
 my (@XaYaZa_Ix, @XaYaZa_Iz);
@@ -266,6 +275,7 @@ foreach (@I) {
     $count++;
 }
 
+open OUTPUT, ">>", $filename;
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
 printf OUTPUT "|%-47s|\n", "Coordinates of the directing vectors (step 1)";
@@ -276,6 +286,7 @@ printf OUTPUT "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}
 print OUTPUT "$small_space\n";
 printf OUTPUT "|%-11s|%-11.${s_f_vector}f|%-11.${s_f_vector}f|%-11.${s_f_vector}f|\n", "a_z", $XaYaZa_Iz[0], $XaYaZa_Iz[1], $XaYaZa_Iz[2];
 print OUTPUT "$small_space\n";
+close OUTPUT;
 
 @I = ();
 @X_a = ();
@@ -328,9 +339,6 @@ for (my $X_a = $XaYaZa_Iz[0] - $limit; $X_a <= $XaYaZa_Iz[0] + $limit; $X_a = $X
 
 @I_sort = sort { $a <=> $b } @I;
 $I_z = $I_sort[-1];
-
-print OUTPUT "\n";
-print OUTPUT "I_x and I_z values found! (step 2):\n";
 
 $count = 0;
 foreach (@I) {
@@ -386,6 +394,9 @@ for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
 }
 
 # Output all moments of inertia
+open OUTPUT, ">>", $filename;
+print OUTPUT "\n";
+print OUTPUT "I_x and I_z values found! (step 2):\n";
 print OUTPUT "\n";
 print OUTPUT "$small_space\n";
 printf OUTPUT "|%-47s|\n", "Moments of inertia, Da*A^2 (step 2)";
