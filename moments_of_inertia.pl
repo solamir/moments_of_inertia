@@ -13,7 +13,7 @@ use strict;
 #use warnings;
 
 # Displaying version information
-my $version = '1.3_git_24';
+my $version = '1.3_git_25';
 
 foreach (@ARGV) {
     if ($_ eq '-v' || $_ eq '--version') {
@@ -150,13 +150,19 @@ foreach (@xyz) {
     if ($atom_data[0] =~ /O$/) {$atom_data[0] = $atomic_masses{"O"}}
     if ($atom_data[0] =~ /F$/) {$atom_data[0] = $atomic_masses{"F"}}
     if ($atom_data[0] =~ /Na$/) {$atom_data[0] = $atomic_masses{"Na"}}
+    if ($atom_data[0] =~ /NA$/) {$atom_data[0] = $atomic_masses{"Na"}}
     if ($atom_data[0] =~ /Mg$/) {$atom_data[0] = $atomic_masses{"Mg"}}
+    if ($atom_data[0] =~ /MG$/) {$atom_data[0] = $atomic_masses{"Mg"}}
     if ($atom_data[0] =~ /Al$/) {$atom_data[0] = $atomic_masses{"Al"}}
+    if ($atom_data[0] =~ /AL$/) {$atom_data[0] = $atomic_masses{"Al"}}
     if ($atom_data[0] =~ /Si$/) {$atom_data[0] = $atomic_masses{"Si"}}
+    if ($atom_data[0] =~ /SI$/) {$atom_data[0] = $atomic_masses{"Si"}}
     if ($atom_data[0] =~ /P$/) {$atom_data[0] = $atomic_masses{"P"}}
     if ($atom_data[0] =~ /S$/) {$atom_data[0] = $atomic_masses{"S"}}
     if ($atom_data[0] =~ /Cl$/) {$atom_data[0] = $atomic_masses{"Cl"}}
+    if ($atom_data[0] =~ /CL$/) {$atom_data[0] = $atomic_masses{"Cl"}}
     if ($atom_data[0] =~ /Br$/) {$atom_data[0] = $atomic_masses{"Br"}}
+    if ($atom_data[0] =~ /BR$/) {$atom_data[0] = $atomic_masses{"Br"}}
     if ($atom_data[0] =~ /I$/) {$atom_data[0] = $atomic_masses{"I"}}                        
     $_ = "@atom_data";
 }
