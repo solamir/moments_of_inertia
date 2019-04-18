@@ -13,7 +13,7 @@ use strict;
 #use warnings;
 
 # Displaying version information
-my $version = '1.3_git_25';
+my $version = '1.3.1';
 
 foreach (@ARGV) {
     if ($_ eq '-v' || $_ eq '--version') {
