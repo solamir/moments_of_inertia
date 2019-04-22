@@ -191,7 +191,7 @@ foreach (@xyz) {push @Z, (split)[3]}
 
 # Finding the coordinates of the center of mass
 # The coordinates of the center of mass are found as the weighted average coordinates of the atom,
-# taking into account their mass
+# considering their masses
 my ($sum_Xm, $sum_Ym, $sum_Zm, $sum_m);
 
 for (my $n = 0; $n <= $total_number_of_atoms - 1; $n++) {
@@ -227,7 +227,7 @@ print OUTPUT "$small_space\n";
 close OUTPUT;
 
 # The search of the moments of inertia with relative to the various lines passing through the center of masses
-# @I is array of inertia moments, and @X_a, @Y_a and @Z_a is arrays of coordinates of the directing vectors of the lines
+# @I is array moments of inertia, and @X_a, @Y_a and @Z_a is arrays of coordinates of the directing vectors of the lines
 # corresponding to this moment of inertia. The lines take all the spatial directions and for each straight line
 # the moment of inertia of the molecule is calculated relative to this line.
 my (@I, @X_a, @Y_a, @Z_a);
@@ -359,8 +359,8 @@ foreach (@I) {
 
 # Calculation of the directing vector for the y axis
 # Axis y is perpendicular at the same time axis x and axis z
-# The equations of two planes plane1 and plane2 are calculated,
-# the intersection of which gives the equation for the axis of rotation y.
+# The equations of two planes, plane1 and plane2, are calculated,
+# the intersection of ones gives the equation for the axis of rotation y.
 
 # Сoordinates of the direction vectors of the axes x and z
 my $a_x = $XaYaZa_Ix[0];

@@ -4,7 +4,7 @@ The program calculates the moments of inertia of the molecules Ix, Iy and Iz rel
 
 ## Software requirements
 
-To run the program, you need a Perl interpreter of version not lower than 5.10 and a shell to start the program. The program can run as a Unix command shell on the Linux operating system, in which the Perl interpreter is usually present with the system, and on the Microsoft Windows operating system using the Windows Power Shell and the installed Perl interpreter, for example, [Strawberry Perl](http://strawberryperl.com/).
+To run the program, you need a Perl interpreter version is 5.10 or higher and a shell to start the program. The program can be run as a Unix command shell on the Linux operating system, in which the Perl interpreter is usually present with the system, and on the Microsoft Windows operating system using the Windows Power Shell and the installed Perl interpreter, for example, [Strawberry Perl](http://strawberryperl.com/).
 
 ## System requirements
 
