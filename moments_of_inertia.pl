@@ -14,7 +14,7 @@ use strict;
 
 # Displaying version information
 
-my $version = '1.3.1_git_26';
+my $version = '1.3.1_git_27';
 
 foreach (@ARGV) {
     if ($_ eq '-v' || $_ eq '--version') {
@@ -476,9 +476,9 @@ print OUTPUT "\n";
 print OUTPUT "$small_space\n";
 printf OUTPUT "|%-47s|\n", "Distance to the boundary points of the molecule";
 print OUTPUT "$small_space\n";
-printf OUTPUT "|%-22s|%-22s|\n", "Rx_max", "Rz_max";
+printf OUTPUT "|%-23s|%-23s|\n", "Rx_max", "Rz_max";
 print OUTPUT "$small_space\n";
-printf OUTPUT "|%-22.${s_f_vector}f|%-22.${s_f_vector}f|\n", $Rx_max, $Rz_max,;
+printf OUTPUT "|%-23.${s_f_vector}f|%-23.${s_f_vector}f|\n", $Rx_max, $Rz_max,;
 print OUTPUT "$small_space\n";
 print OUTPUT "\n";
 
