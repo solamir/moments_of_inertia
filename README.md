@@ -43,8 +43,7 @@ You can set the parameters of the program using the following startup keys:
 
 With corrections, questions, comments and suggestions, please email:
 
-* Mikhail N. Koverda m.kov@pm.me
-* Anna A. Koverda a.koverda@pm.me
+* Mikhail N. Koverda m.koverda@uniyar.ac.ru
 * Eugene N. Ofitserov ofitser@mail.ru
 
 ## License
